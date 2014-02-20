@@ -45,7 +45,7 @@ class IframeRuntime extends Base
     window.addEventListener 'message', @onMessage, false
 
   updateIframe: =>
-    return unless @iframe or @graph
+    return if !@iframe or !@graph
     body = @iframe.contentDocument.querySelector 'body'
     return unless body
     env = @graph.properties.environment
