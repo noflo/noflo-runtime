@@ -49,7 +49,7 @@ class IframeRuntime extends Base
     body = @iframe.contentDocument.querySelector 'body'
     return unless body
     env = @graph.properties.environment
-    return unless env or env.content
+    return if !env or !env.content
     body.innerHTML = env.content
 
   disconnect: ->
