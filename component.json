@@ -1,0 +1,29 @@
+{
+  "name": "noflo-runtime",
+  "description": "FBP Runtime handling components for NoFlo",
+  "author": "Henri Bergius <henri.bergius@iki.fi>",
+  "repo": "noflo/noflo-runtime",
+  "version": "0.1.0",
+  "keywords": [
+  ],
+  "dependencies": {
+    "noflo/noflo": "*"
+  },
+  "scripts": [
+    "components/ConnectRuntime.coffee",
+    "components/ListenLibrary.coffee",
+    "src/runtimes/base.coffee",
+    "src/runtimes/iframe.coffee",
+    "src/runtimes/websocket.coffee",
+    "index.js"
+  ],
+  "json": [
+    "component.json"
+  ],
+  "noflo": {
+    "components": {
+      "ConnectRuntime": "components/ConnectRuntime.coffee",
+      "ListenLibrary": "components/ListenLibrary.coffee"
+    }
+  }
+}
