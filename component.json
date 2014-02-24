@@ -13,6 +13,7 @@
   "scripts": [
     "components/ConnectRuntime.coffee",
     "components/ListenLibrary.coffee",
+    "components/SendGraphChanges.coffee",
     "src/runtimes/base.coffee",
     "src/runtimes/iframe.coffee",
     "src/runtimes/websocket.coffee",
@@ -24,7 +25,8 @@
   "noflo": {
     "components": {
       "ConnectRuntime": "components/ConnectRuntime.coffee",
-      "ListenLibrary": "components/ListenLibrary.coffee"
+      "ListenLibrary": "components/ListenLibrary.coffee",
+      "SendGraphChanges": "components/SendGraphChanges.coffee"
     }
   }
 }
