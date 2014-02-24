@@ -111,7 +111,7 @@ class SendGraphChanges extends noflo.Component
       tgt:
         node: iip.to.node
         port: iip.to.port
-      metadata: edge.metadata
+      metadata: iip.metadata
       graph: @graph.properties.id
 
   removeInitial: (iip) =>
