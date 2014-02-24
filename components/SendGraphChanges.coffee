@@ -43,6 +43,10 @@ class SendGraphChanges extends noflo.Component
     @graph.on 'removeEdge', @removeEdge
     @graph.on 'addInitial', @addInitial
     @graph.on 'removeInitial', @removeInitial
+    @graph.on 'addInport', @addInport
+    @graph.on 'removeInport', @removeInport
+    @graph.on 'addOutport', @addOutport
+    @graph.on 'removeOutport', @removeOutport
 
   unsubscribe: ->
     return unless @graph
@@ -54,6 +58,10 @@ class SendGraphChanges extends noflo.Component
     @graph.removeListener 'removeEdge', @removeEdge
     @graph.removeListener 'addInitial', @addInitial
     @graph.removeListener 'removeInitial', @removeInitial
+    @graph.removeListener 'addInport', @addInport
+    @graph.removeListener 'removeInport', @removeInport
+    @graph.removeListener 'addOutport', @addOutport
+    @graph.removeListener 'removeOutport', @removeOutport
 
     @outPorts.sent.disconnect()
     @outPorts.queued.disconnect()
@@ -119,6 +127,32 @@ class SendGraphChanges extends noflo.Component
       tgt:
         node: iip.to.node
         port: iip.to.port
+      graph: @graph.properties.id
+
+  addInport: (pub, priv) =>
+    @registerChange 'addinport',
+      public: pub
+      node: priv.process
+      port: priv.port
+      metadata: priv.metadata
+      graph: @graph.properties.id
+
+  removeInport: (pub) =>
+    @registerChange 'removeinport',
+      public: pub
+      graph: @graph.properties.id
+
+  addOuport: (pub, priv) =>
+    @registerChange 'addoutport',
+      public: pub
+      node: priv.process
+      port: priv.port
+      metadata: priv.metadata
+      graph: @graph.properties.id
+
+  removeOutport: (pub) =>
+    @registerChange 'removeoutport',
+      public: pub
       graph: @graph.properties.id
 
   send: =>
