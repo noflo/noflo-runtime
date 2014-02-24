@@ -5,6 +5,7 @@ class SendGraphChanges extends noflo.Component
     @runtime = null
     @graph = null
     @changes = []
+    @subscribed = false
     @inPorts = new noflo.InPorts
       runtime:
         datatype: 'object'
@@ -34,6 +35,7 @@ class SendGraphChanges extends noflo.Component
       do @subscribe
 
   subscribe: ->
+    return if @subscribed
     return if !@runtime or !@graph
     @graph.on 'endTransaction', @send
     @graph.on 'addNode', @addNode
@@ -47,6 +49,7 @@ class SendGraphChanges extends noflo.Component
     @graph.on 'removeInport', @removeInport
     @graph.on 'addOutport', @addOutport
     @graph.on 'removeOutport', @removeOutport
+    @subscribed = true
 
   unsubscribe: ->
     return unless @graph
@@ -62,6 +65,7 @@ class SendGraphChanges extends noflo.Component
     @graph.removeListener 'removeInport', @removeInport
     @graph.removeListener 'addOutport', @addOutport
     @graph.removeListener 'removeOutport', @removeOutport
+    @subscribed = false
 
     @outPorts.sent.disconnect()
     @outPorts.queued.disconnect()
@@ -142,7 +146,7 @@ class SendGraphChanges extends noflo.Component
       public: pub
       graph: @graph.properties.id
 
-  addOuport: (pub, priv) =>
+  addOutport: (pub, priv) =>
     @registerChange 'addoutport',
       public: pub
       node: priv.process
