@@ -19,6 +19,7 @@ class IframeRuntime extends Base
 
   setParentElement: (parent) ->
     @iframe = document.createElement 'iframe'
+    @iframe.setAttribute 'sandbox', 'allow-scripts'
     parent.appendChild @iframe
 
   connect: ->
@@ -45,6 +46,7 @@ class IframeRuntime extends Base
     window.addEventListener 'message', @onMessage, false
 
   updateIframe: =>
+    return
     return if !@iframe or !@graph
     body = @iframe.contentDocument.querySelector 'body'
     return unless body
