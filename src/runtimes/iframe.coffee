@@ -73,6 +73,8 @@ class IframeRuntime extends Base
     return unless w
     try
       return if w.location.href is 'about:blank'
+      if w.location.href.indexOf('chrome-extension://') isnt -1
+        throw new Error 'Use * for IFRAME communications in a Chrome app'
     catch e
       # Chrome Apps
       w.postMessage
