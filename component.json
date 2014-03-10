@@ -29,6 +29,7 @@
     "src/runtimes/iframe.coffee",
     "src/runtimes/websocket.coffee",
     "src/runtimes/microflo.coffee",
+    "src/runtimes/webrtc.coffee",
     "index.js",
     "components/GetSource.coffee",
     "components/ListenNetwork.coffee",
