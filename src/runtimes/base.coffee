@@ -39,7 +39,7 @@ class BaseRuntime extends EventEmitter
   getElement: ->
 
   recvRuntime: (command, payload) ->
-    @emit 'graph',
+    @emit 'runtime',
       command: command
       payload: payload
 
