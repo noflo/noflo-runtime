@@ -68,6 +68,9 @@ class IframeRuntime extends Base
       label: 'connected'
     @emit 'connected'
 
+    # Perform capability discovery
+    @send 'runtime', 'getruntime', null
+
   send: (protocol, command, payload) ->
     w = @iframe.contentWindow
     return unless w
@@ -91,6 +94,7 @@ class IframeRuntime extends Base
 
   onMessage: (message) =>
     switch message.data.protocol
+      when 'runtime' then @recvRuntime message.data.command, message.data.payload
       when 'graph' then @recvGraph message.data.command, message.data.payload
       when 'network' then @recvNetwork message.data.command, message.data.payload
       when 'component' then @recvComponent message.data.command, message.data.payload

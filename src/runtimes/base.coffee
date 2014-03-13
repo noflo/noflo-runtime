@@ -38,6 +38,11 @@ class BaseRuntime extends EventEmitter
   # Get a DOM element rendered by the runtime for preview purposes
   getElement: ->
 
+  recvRuntime: (command, payload) ->
+    @emit 'graph',
+      command: command
+      payload: payload
+
   recvComponent: (command, payload) ->
     switch command
       when 'component'
@@ -71,6 +76,8 @@ class BaseRuntime extends EventEmitter
           command: command
           payload: payload
 
+  sendRuntime: (command, payload) ->
+    @send 'runtime', command, payload
   sendGraph: (command, payload) ->
     @send 'graph', command, payload
   sendNetwork: (command, payload) ->

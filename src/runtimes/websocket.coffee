@@ -33,6 +33,10 @@ class WebSocketRuntime extends Base
         online: true
         label: 'connected'
       @emit 'connected'
+
+      # Perform capability discovery
+      @send 'runtime', 'getruntime', null
+
       @flush()
     , false
     @connection.addEventListener 'message', @handleMessage, false
@@ -72,6 +76,7 @@ class WebSocketRuntime extends Base
   handleMessage: (message) =>
     msg = JSON.parse message.data
     switch msg.protocol
+      when 'runtime' then @recvRuntime msg.command, msg.payload
       when 'graph' then @recvGraph msg.command, msg.payload
       when 'network' then @recvNetwork msg.command, msg.payload
       when 'component' then @recvComponent msg.command, msg.payload
