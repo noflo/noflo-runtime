@@ -47,8 +47,10 @@ class SendGraphChanges extends noflo.Component
     @graph.on 'removeInitial', @removeInitial
     @graph.on 'addInport', @addInport
     @graph.on 'removeInport', @removeInport
+    @graph.on 'renameInport', @renameInport
     @graph.on 'addOutport', @addOutport
     @graph.on 'removeOutport', @removeOutport
+    @graph.on 'renameOutport', @renameOutport
     @subscribed = true
 
   unsubscribe: ->
@@ -146,6 +148,12 @@ class SendGraphChanges extends noflo.Component
       public: pub
       graph: @graph.properties.id
 
+  renameInport: (oldPub, newPub) =>
+    @registerChange 'renameinport',
+      from: oldPub
+      to: newPub
+      graph: @graph.properties.id
+
   addOutport: (pub, priv) =>
     @registerChange 'addoutport',
       public: pub
@@ -157,6 +165,12 @@ class SendGraphChanges extends noflo.Component
   removeOutport: (pub) =>
     @registerChange 'removeoutport',
       public: pub
+      graph: @graph.properties.id
+
+  renameOutport: (oldPub, newPub) =>
+    @registerChange 'renameoutport',
+      from: oldPub
+      to: newPub
       graph: @graph.properties.id
 
   send: =>
