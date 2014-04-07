@@ -65,8 +65,10 @@ class SendGraphChanges extends noflo.Component
     @graph.removeListener 'removeInitial', @removeInitial
     @graph.removeListener 'addInport', @addInport
     @graph.removeListener 'removeInport', @removeInport
+    @graph.removeListener 'renameInport', @renameInport
     @graph.removeListener 'addOutport', @addOutport
     @graph.removeListener 'removeOutport', @removeOutport
+    @graph.removeListener 'renameOutport', @renameOutport
     @subscribed = false
 
     @outPorts.sent.disconnect()
