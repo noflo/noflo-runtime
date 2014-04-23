@@ -1,5 +1,7 @@
 noflo = require 'noflo'
 
+# @runtime all
+
 class SendGraphChanges extends noflo.Component
   constructor: ->
     @runtime = null

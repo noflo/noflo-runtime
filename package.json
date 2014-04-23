@@ -32,7 +32,17 @@
     "grunt-contrib-watch": "~0.3.1",
     "component-json": "~0.1.4",
     "grunt-combine": "~0.8.3",
-    "grunt-component": "~0.1.2"
+    "grunt-component": "~0.1.2",
+    "grunt-noflo-manifest": "^0.1.2"
   },
-  "keywords": []
+  "keywords": [],
+  "scripts": {
+    "test": "grunt test"
+  },
+  "noflo": {
+    "components": {
+      "ListenLibrary": "components/ListenLibrary.coffee",
+      "SendGraphChanges": "components/SendGraphChanges.coffee"
+    }
+  }
 }

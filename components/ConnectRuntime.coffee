@@ -1,5 +1,7 @@
 noflo = require 'noflo'
 
+# @runtime noflo-browser
+
 class ConnectRuntime extends noflo.Component
   constructor: ->
     @element = null
