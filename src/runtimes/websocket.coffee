@@ -9,19 +9,30 @@ class WebSocketRuntime extends Base
     super definition
 
   getElement: ->
+
     # DOM visualization for remote runtime output
-    console = document.createElement 'pre'
+    container = document.createElement 'div'
+    messageConsole = document.createElement 'pre'
+    previewImage = document.createElement 'img'
+    container.appendChild previewImage
+    container.appendChild messageConsole
 
     @on 'network', (message) ->
       return unless message.command is 'output'
-      message.payload.message = '' unless message.payload.message
-      encoded = message.payload.message.replace /[\u00A0-\u99999<>\&]/gim, (i) -> "&##{i.charCodeAt(0)};"
-      console.innerHTML += "#{encoded}\n"
-      console.scrollTop = console.scrollHeight
-    @on 'disconnected', ->
-      console.innerHTML = ''
 
-    console
+      p = message.payload 
+      if p.type? and p.type == 'previewurl'
+        hasQuery = p.url.indexOf '?' != -1
+        separator = if hasQuery then '&' else '?'
+        previewImage.src = p.url + separator + 'timestamp=' + new Date().getTime()
+      if p.message?
+        encoded = p.message.replace /[\u00A0-\u99999<>\&]/gim, (i) -> "&##{i.charCodeAt(0)};"
+        messageConsole.innerHTML += "#{encoded}\n"
+        messageConsole.scrollTop = messageConsole.scrollHeight
+    @on 'disconnected', ->
+      messageConsole.innerHTML = ''
+
+    container
 
   connect: ->
     return if @connection or @connecting
