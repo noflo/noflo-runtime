@@ -9,6 +9,9 @@
     "noflo/noflo": "*",
     "component/emitter": "*"
   },
+  "remotes": [
+    "https://raw.githubusercontent.com"
+  ],
   "scripts": [
     "components/ConnectRuntime.coffee",
     "components/ListenLibrary.coffee",
