@@ -14,6 +14,7 @@ class WebSocketRuntime extends Base
 
     # DOM visualization for remote runtime output
     @container = document.createElement 'div'
+    @container.classList.add 'preview-container'
     messageConsole = document.createElement 'pre'
     previewImage = document.createElement 'img'
     @container.appendChild previewImage
