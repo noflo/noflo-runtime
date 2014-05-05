@@ -6,21 +6,23 @@ class WebSocketRuntime extends Base
     @connection = null
     @protocol = 'noflo'
     @buffer = []
+    @container = null
     super definition
 
   getElement: ->
+    return @container if @container
 
     # DOM visualization for remote runtime output
-    container = document.createElement 'div'
+    @container = document.createElement 'div'
     messageConsole = document.createElement 'pre'
     previewImage = document.createElement 'img'
-    container.appendChild previewImage
-    container.appendChild messageConsole
+    @container.appendChild previewImage
+    @container.appendChild messageConsole
 
     @on 'network', (message) ->
       return unless message.command is 'output'
 
-      p = message.payload 
+      p = message.payload
       if p.type? and p.type == 'previewurl'
         hasQuery = p.url.indexOf '?' != -1
         separator = if hasQuery then '&' else '?'
@@ -32,7 +34,7 @@ class WebSocketRuntime extends Base
     @on 'disconnected', ->
       messageConsole.innerHTML = ''
 
-    container
+    @container
 
   connect: ->
     return if @connection or @connecting
