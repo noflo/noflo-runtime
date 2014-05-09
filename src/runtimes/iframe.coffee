@@ -3,6 +3,8 @@ Base = require './base'
 class IframeRuntime extends Base
   constructor: (definition) ->
     @origin = window.location.origin
+    @connecting = false
+    @buffer = []
     @iframe = null
     super definition
 
@@ -29,6 +31,7 @@ class IframeRuntime extends Base
     @iframe.addEventListener 'load', @onLoaded, false
 
     # Let the UI know we're connecting
+    @connecting = true
     @emit 'status',
       online: false
       label: 'connecting'
@@ -63,6 +66,7 @@ class IframeRuntime extends Base
 
   # Called every time the iframe has loaded successfully
   onLoaded: =>
+    @connecting = false
     @emit 'status',
       online: true
       label: 'connected'
@@ -71,7 +75,16 @@ class IframeRuntime extends Base
     # Perform capability discovery
     @send 'runtime', 'getruntime', null
 
+    @flush()
+
   send: (protocol, command, payload) ->
+    if @connecting
+      @buffer.push
+        protocol: protocol
+        command: command
+        payload: payload
+      return
+
     w = @iframe.contentWindow
     return unless w
     try
@@ -98,5 +111,10 @@ class IframeRuntime extends Base
       when 'graph' then @recvGraph message.data.command, message.data.payload
       when 'network' then @recvNetwork message.data.command, message.data.payload
       when 'component' then @recvComponent message.data.command, message.data.payload
+
+  flush: ->
+    for item in @buffer
+      @send item.protocol, item.command, item.payload
+    @buffer = []
 
 module.exports = IframeRuntime

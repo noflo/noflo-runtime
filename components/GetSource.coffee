@@ -29,30 +29,33 @@ class GetSource extends noflo.AsyncComponent
     super 'name', 'source'
 
   subscribe: (runtime) ->
+    return if @runtime is runtime
     @unsubscribe @runtime if @runtime
     runtime.on 'component', @handleMessage
     @runtime = runtime
-    while @pending.length
-      task = @pending.shift()
-      @doAsync task.name, task.callback
+    if @runtime.connecting
+      @runtime.once 'status', =>
+        do @flush
+    else
+      do @flush
 
   unsubscribe: (runtime) ->
     @sources = {}
+    @pending = []
     runtime.off 'component', @handleMessage
     @runtime = null
 
   handleMessage: (message) =>
     return unless message.command is 'source'
-    key = message.payload.name
-    key = "#{message.payload.library}/#{key}" if message.payload.library
-    @sources[key] = message.payload
+    @sources["#{message.payload.library}/#{message.payload.name}"] = message.payload
 
   doAsync: (name, callback) ->
-    unless @runtime
+    if not @runtime or @runtime.connecting
       @pending.push
         name: name
         callback: callback
       return
+
     @runtime.sendComponent 'getsource',
       name: name
 
@@ -76,5 +79,10 @@ class GetSource extends noflo.AsyncComponent
   shutdown: ->
     return unless @runtime
     unsubscribe @runtime
+
+  flush: ->
+    while @pending.length
+      task = @pending.shift()
+      @doAsync task.name, task.callback
 
 exports.getComponent = -> new GetSource
