@@ -6,6 +6,7 @@ class GetSource extends noflo.AsyncComponent
   icon: 'code'
   constructor: ->
     @sources = {}
+    @pending = []
     @runtime = null
 
     @inPorts = new noflo.InPorts
@@ -31,6 +32,9 @@ class GetSource extends noflo.AsyncComponent
     @unsubscribe @runtime if @runtime
     runtime.on 'component', @handleMessage
     @runtime = runtime
+    while @pending.length
+      task = @pending.shift()
+      @doAsync task.name, task.callback
 
   unsubscribe: (runtime) ->
     @sources = {}
@@ -43,7 +47,10 @@ class GetSource extends noflo.AsyncComponent
 
   doAsync: (name, callback) ->
     unless @runtime
-      return callback new Error 'No runtime available'
+      @pending.push
+        name: name
+        callback: callback
+      return
     @runtime.sendComponent 'getsource',
       name: name
 
