@@ -41,6 +41,7 @@
   },
   "noflo": {
     "components": {
+      "GetSource": "components/GetSource.coffee",
       "ListenLibrary": "components/ListenLibrary.coffee",
       "SendGraphChanges": "components/SendGraphChanges.coffee"
     }

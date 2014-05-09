@@ -19,7 +19,8 @@
     "src/runtimes/base.coffee",
     "src/runtimes/iframe.coffee",
     "src/runtimes/websocket.coffee",
-    "index.js"
+    "index.js",
+    "components/GetSource.coffee"
   ],
   "json": [
     "component.json"
@@ -27,6 +28,7 @@
   "noflo": {
     "components": {
       "ConnectRuntime": "components/ConnectRuntime.coffee",
+      "GetSource": "components/GetSource.coffee",
       "ListenLibrary": "components/ListenLibrary.coffee",
       "SendGraphChanges": "components/SendGraphChanges.coffee"
     }
