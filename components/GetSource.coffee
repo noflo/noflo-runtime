@@ -43,7 +43,9 @@ class GetSource extends noflo.AsyncComponent
 
   handleMessage: (message) =>
     return unless message.command is 'source'
-    @sources["#{message.payload.library}/#{message.payload.name}"] = message.payload
+    key = message.payload.name
+    key = "#{message.payload.library}/#{key}" if message.payload.library
+    @sources[key] = message.payload
 
   doAsync: (name, callback) ->
     unless @runtime
