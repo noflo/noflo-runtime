@@ -45,12 +45,12 @@ class BaseRuntime extends EventEmitter
 
   recvComponent: (command, payload) ->
     switch command
-      when 'component'
-        @emit 'component',
-          command: command
-          payload: payload
       when 'error'
         @emit 'network',
+          command: command
+          payload: payload
+      else
+        @emit 'component',
           command: command
           payload: payload
 
