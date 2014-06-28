@@ -28,6 +28,10 @@ class MicroFloRuntime extends Base
   connect: ->
     unless @container
       throw new Exception 'Unable to connect without a parent element'
+ 
+#    window.require 'microflo-runtime', (Module) ->
+#        console.log 'Emscripten stuff loaded', simulator
+
 
     # Let the UI know we're connecting
     @connecting = true
@@ -46,8 +50,12 @@ class MicroFloRuntime extends Base
     baudRate = 9600
     debugLevel = 'Error'
     address = @getAddress()
-    serialPort = address.replace 'serial://', ''
-    @setupRuntime baudRate, serialPort, debugLevel
+    if address == 'simulator://'
+        @setupSimulator
+        # FIXME: hook up transport to the runtime
+    else
+        serialPort = address.replace 'serial://', ''
+        @setupRuntime baudRate, serialPort, debugLevel
 
     # HACK: sends initial message, which hooks up receiving as well
     @onLoaded()
@@ -62,6 +70,38 @@ class MicroFloRuntime extends Base
       online: false
       label: 'disconnected'
     @emit 'disconnected'
+
+  setupSimulator: ->
+    c = document.createElement 'object'
+    c.setAttribute 'type', "image/svg+xml"
+    c.setAttribute 'data', "controller_arduino_uno_r3.svg"
+    c.id = 'microflo-simulator'
+    c.innerHTML = 'No SVG support!'
+    @container.appendChild c
+
+    setLed = (On) ->
+        controller = document.getElementById("microflo-simulator").contentDocument;
+        controller = c.contentDocument;
+        ledLight = controller.getElementById "pin13led-light"
+        opacity = if On then '1' else '0'
+        ledLight.setAttributeNS null, 'opacity', opacity
+
+    runtime = Module['_emscripten_runtime_new']()
+    setInterval( () ->
+        Module['_emscripten_runtime_run'] runtime
+    , 100)
+
+    Module['print'] = (str) ->
+      console.log(str);
+
+      # HACK: use a custom I/O backend instead, communicate via host-transport
+      tok = str.split " "
+      if tok.length > 3 && tok[2].indexOf("::DigitalWrite") != -1
+        pin = tok[5].replace("pin=","").replace(",","")
+        pin = parseInt pin
+        state = tok[6] == "value=ON"
+        if pin == 13
+          setLed state
 
   updatecontainer: =>
     return if !@container or !@graph
