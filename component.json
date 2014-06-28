@@ -7,6 +7,7 @@
   "keywords": [],
   "dependencies": {
     "noflo/noflo": "*",
+    "jonnor/microflo": "*",
     "component/emitter": "*"
   },
   "remotes": [
@@ -19,6 +20,7 @@
     "src/runtimes/base.coffee",
     "src/runtimes/iframe.coffee",
     "src/runtimes/websocket.coffee",
+    "src/runtimes/microflo.coffee",
     "index.js",
     "components/GetSource.coffee"
   ],
