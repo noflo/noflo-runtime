@@ -42,6 +42,7 @@
   "noflo": {
     "components": {
       "GetSource": "components/GetSource.coffee",
+      "ListGraphs": "components/ListGraphs.coffee",
       "ListenLibrary": "components/ListenLibrary.coffee",
       "ListenRuntime": "components/ListenRuntime.coffee",
       "SendGraphChanges": "components/SendGraphChanges.coffee"
