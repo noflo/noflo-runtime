@@ -42,9 +42,11 @@ class MicroFloRuntime extends Base
     @on 'connected', @updatecontainer
 
     # Setup runtime
+    # TODO: remove hardcoding of baudrate and debugLevel
     baudRate = 9600
-    serialPort = '/dev/ttyUSB1'
     debugLevel = 'Error'
+    address = @getAddress()
+    serialPort = address.replace 'serial://', ''
     @setupRuntime baudRate, serialPort, debugLevel
 
     # HACK: sends initial message, which hooks up receiving as well
