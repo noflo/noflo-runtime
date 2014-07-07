@@ -43,6 +43,7 @@ class SendGraphChanges extends noflo.Component
     @graph.on 'addNode', @addNode
     @graph.on 'removeNode', @removeNode
     @graph.on 'renameNode', @renameNode
+    @graph.on 'changeNode', @changeNode
     @graph.on 'addEdge', @addEdge
     @graph.on 'removeEdge', @removeEdge
     @graph.on 'addInitial', @addInitial
@@ -61,6 +62,7 @@ class SendGraphChanges extends noflo.Component
     @graph.removeListener 'addNode', @addNode
     @graph.removeListener 'removeNode', @removeNode
     @graph.removeListener 'renameNode', @renameNode
+    @graph.removeListener 'changeNode', @changeNode
     @graph.removeListener 'addEdge', @addEdge
     @graph.removeListener 'removeEdge', @removeEdge
     @graph.removeListener 'addInitial', @addInitial
@@ -98,6 +100,12 @@ class SendGraphChanges extends noflo.Component
     @registerChange 'renamenode',
       from: from
       to: to
+      graph: @graph.properties.id
+
+  changeNode: (node) =>
+    @registerChange 'changenode',
+      id: node.id
+      metadata: node.metadata
       graph: @graph.properties.id
 
   addEdge: (edge) =>
