@@ -7,6 +7,7 @@ class SendGraphChanges extends noflo.Component
     @runtime = null
     @graph = null
     @changes = []
+    @changesStates = {}
     @subscribed = false
     @inPorts = new noflo.InPorts
       runtime:
@@ -93,6 +94,12 @@ class SendGraphChanges extends noflo.Component
       topic: topic
       payload: payload
     @outPorts.queued.send @changes.length
+    return @changes.length - 1
+
+  replaceChange: (offset, topic, payload) =>
+    @changes[offset] =
+      topic: topic
+      payload: payload
 
   addNode: (node) =>
     @registerChange 'addnode',
@@ -113,10 +120,15 @@ class SendGraphChanges extends noflo.Component
       graph: @graph.properties.id
 
   changeNode: (node) =>
-    @registerChange 'changenode',
+    key = 'changenode- ' + node.id
+    metadata =
       id: node.id
       metadata: node.metadata
       graph: @graph.properties.id
+    if @changesStates[key] is undefined
+      @changesStates[key] = @registerChange 'changenode', metadata
+    else
+      @replaceChange @changesStates[key], 'changenode', metadata
 
   addEdge: (edge) =>
     @registerChange 'addedge',
@@ -244,6 +256,7 @@ class SendGraphChanges extends noflo.Component
     @outPorts.sent.send true
     @outPorts.sent.endGroup() if @graph
     @outPorts.queued.send @changes.length
+    @changesStates = {}
 
   shutdown: ->
     do @unsubscribe
