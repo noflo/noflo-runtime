@@ -43,6 +43,7 @@
     "components": {
       "GetSource": "components/GetSource.coffee",
       "ListGraphs": "components/ListGraphs.coffee",
+      "ListNetworks": "components/ListNetworks.coffee",
       "ListenLibrary": "components/ListenLibrary.coffee",
       "ListenRuntime": "components/ListenRuntime.coffee",
       "SendGraphChanges": "components/SendGraphChanges.coffee"
