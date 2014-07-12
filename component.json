@@ -16,6 +16,7 @@
   "scripts": [
     "components/ConnectRuntime.coffee",
     "components/ListenLibrary.coffee",
+    "components/ListenRuntime.coffee",
     "components/SendGraphChanges.coffee",
     "src/runtimes/base.coffee",
     "src/runtimes/iframe.coffee",
@@ -32,6 +33,7 @@
       "ConnectRuntime": "components/ConnectRuntime.coffee",
       "GetSource": "components/GetSource.coffee",
       "ListenLibrary": "components/ListenLibrary.coffee",
+      "ListenRuntime": "components/ListenRuntime.coffee",
       "SendGraphChanges": "components/SendGraphChanges.coffee"
     }
   }
