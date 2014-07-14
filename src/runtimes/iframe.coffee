@@ -63,6 +63,7 @@ class IframeRuntime extends Base
     @emit 'status',
       online: false
       label: 'disconnected'
+    @emit 'disconnected'
 
   # Called every time the iframe has loaded successfully
   onLoaded: =>

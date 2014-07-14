@@ -61,6 +61,7 @@ class MicroFloRuntime extends Base
     @emit 'status',
       online: false
       label: 'disconnected'
+    @emit 'disconnected'
 
   updatecontainer: =>
     return if !@container or !@graph
