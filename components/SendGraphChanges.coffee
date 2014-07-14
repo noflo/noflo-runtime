@@ -53,6 +53,10 @@ class SendGraphChanges extends noflo.Component
     @graph.on 'addOutport', @addOutport
     @graph.on 'removeOutport', @removeOutport
     @graph.on 'renameOutport', @renameOutport
+    @graph.on 'addGroup', @addGroup
+    @graph.on 'removeGroup', @removeGroup
+    @graph.on 'renameGroup', @renameGroup
+    @graph.on 'changeGroup', @changeGroup
     @subscribed = true
 
   unsubscribe: ->
@@ -71,6 +75,10 @@ class SendGraphChanges extends noflo.Component
     @graph.removeListener 'addOutport', @addOutport
     @graph.removeListener 'removeOutport', @removeOutport
     @graph.removeListener 'renameOutport', @renameOutport
+    @graph.removeListener 'addGroup', @addGroup
+    @graph.removeListener 'removeGroup', @removeGroup
+    @graph.removeListener 'renameGroup', @renameGroup
+    @graph.removeListener 'changeGroup', @changeGroup
     @subscribed = false
 
     @outPorts.sent.disconnect()
@@ -176,6 +184,35 @@ class SendGraphChanges extends noflo.Component
       from: oldPub
       to: newPub
       graph: @graph.properties.id
+
+  addGroup: (group) =>
+    @registerChange 'addgroup',
+      name: group.name
+      nodes: group.nodes
+      metadata: group.metadata
+      graph: @graph.properties.id
+
+  removeGroup: (group) =>
+    @registerChange 'removegroup',
+      name: group.name
+      graph: @graph.properties.id
+
+  renameGroup: (oldName, newName) =>
+    @registerChange 'renamegroup',
+      from: oldName
+      to: newName
+      graph: @graph.properties.id
+
+  changeGroup: (group, before) =>
+    key = 'changegroup-' + group.name
+    metadata =
+      name: group.name
+      metadata: group.metadata
+      graph: @graph.properties.id
+    if @changesStates[key] is undefined
+      @changesStates[key] = @registerChange 'changegroup', metadata
+    else
+      @replaceChange @changesStates[key], 'changegroup', metadata
 
   send: =>
     return unless @runtime
