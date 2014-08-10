@@ -15,6 +15,7 @@
   ],
   "scripts": [
     "components/ConnectRuntime.coffee",
+    "components/DebugNetwork.coffee",
     "components/ListenLibrary.coffee",
     "components/ListenRuntime.coffee",
     "components/SendGraphChanges.coffee",
@@ -31,6 +32,7 @@
   "noflo": {
     "components": {
       "ConnectRuntime": "components/ConnectRuntime.coffee",
+      "DebugNetwork": "components/DebugNetwork.coffee",
       "GetSource": "components/GetSource.coffee",
       "ListenLibrary": "components/ListenLibrary.coffee",
       "ListenRuntime": "components/ListenRuntime.coffee",
