@@ -44,6 +44,7 @@
       "DebugNetwork": "components/DebugNetwork.coffee",
       "GetSource": "components/GetSource.coffee",
       "ListenLibrary": "components/ListenLibrary.coffee",
+      "ListenProcessErrors": "components/ListenProcessErrors.coffee",
       "ListenRuntime": "components/ListenRuntime.coffee",
       "SendGraphChanges": "components/SendGraphChanges.coffee"
     }
