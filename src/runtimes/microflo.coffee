@@ -86,10 +86,12 @@ class MicroFloRuntime extends Base
         opacity = if On then '1' else '0'
         ledLight.setAttributeNS null, 'opacity', opacity
 
+    # FIXME: move into microflo.simulator behind a nice JS interface
     runtime = Module['_emscripten_runtime_new']()
+    tickIntervalMs = 100
     setInterval( () ->
-        Module['_emscripten_runtime_run'] runtime
-    , 100)
+        Module['_emscripten_runtime_run'] runtime, tickIntervalMs
+    , tickIntervalMs)
 
     Module['print'] = (str) ->
       console.log(str);
@@ -111,9 +113,9 @@ class MicroFloRuntime extends Base
     @microfloGraph = {}
     # FIXME: nasty and racy, should pass callback and only then continue
     @debugLevel = debugLevel
-    @getSerial = null
+    @getTransport = null
     try
-      @getSerial = microflo.serial.openTransport serialPort, baudRate
+      @getTransport = microflo.serial.openTransport serialPort, baudRate
     catch e
       console.log 'MicroFlo setup:', e
 
@@ -144,7 +146,8 @@ class MicroFloRuntime extends Base
       @onMessage { data: response }
     conn = { send: sendFunc }
     try
-      microflo.runtime.handleMessage msg, conn, @microfloGraph, @getSerial, @debugLevel
+      if @getTransport
+        microflo.runtime.handleMessage msg, conn, @microfloGraph, @getTransport, @debugLevel
     catch e
       console.log e.stack
       console.log e
