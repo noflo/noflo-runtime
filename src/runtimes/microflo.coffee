@@ -8,6 +8,7 @@ class MicroFloRuntime extends Base
     @connecting = false
     @buffer = []
     @container = null
+    @simulator = null
     super definition
 
   getElement: -> @container
@@ -86,22 +87,11 @@ class MicroFloRuntime extends Base
         opacity = if On then '1' else '0'
         ledLight.setAttributeNS null, 'opacity', opacity
 
-    # FIXME: move into microflo.simulator behind a nice JS interface
-    runtime = Module['_emscripten_runtime_new']()
-    tickIntervalMs = 100
-    setInterval( () ->
-        Module['_emscripten_runtime_run'] runtime, tickIntervalMs
-    , tickIntervalMs)
+    @simulator = new microflo.simulator.RuntimeSimulator()
+    @simulator.start()
 
-    Module['print'] = (str) ->
-      console.log(str);
-
-      # HACK: use a custom I/O backend instead, communicate via host-transport
-      tok = str.split " "
-      if tok.length > 3 && tok[2].indexOf("::DigitalWrite") != -1
-        pin = tok[5].replace("pin=","").replace(",","")
-        pin = parseInt pin
-        state = tok[6] == "value=ON"
+    # FIXME: this interface does not exist yet    
+    @simulator.io.on 'digitalWrite', (pin, state)
         if pin == 13
           setLed state
 
