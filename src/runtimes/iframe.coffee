@@ -26,7 +26,7 @@ class IframeRuntime extends Base
 
   connect: ->
     unless @iframe
-      throw new Exception 'Unable to connect without a parent element'
+      throw new Error 'Unable to connect without a parent element'
 
     @iframe.addEventListener 'load', @onLoaded, false
 

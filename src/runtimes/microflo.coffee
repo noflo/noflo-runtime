@@ -27,7 +27,7 @@ class MicroFloRuntime extends Base
 
   connect: ->
     unless @container
-      throw new Exception 'Unable to connect without a parent element'
+      throw new Error 'Unable to connect without a parent element'
 
     # Let the UI know we're connecting
     @connecting = true
