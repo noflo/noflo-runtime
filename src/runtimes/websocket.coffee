@@ -40,22 +40,26 @@ class WebSocketRuntime extends Base
   connect: ->
     return if @connection or @connecting
 
-    @connection = new WebSocket @getAddress(), @protocol
+    if @protocol
+      @connection = new WebSocket @getAddress(), @protocol
+    else
+      @connection = new WebSocket @getAddress()
     @connection.addEventListener 'open', =>
       @connecting = false
+
+      # Perform capability discovery
+      @send 'runtime', 'getruntime', null
+
       @emit 'status',
         online: true
         label: 'connected'
       @emit 'connected'
 
-      # Perform capability discovery
-      @send 'runtime', 'getruntime', null
-
       @flush()
     , false
     @connection.addEventListener 'message', @handleMessage, false
     @connection.addEventListener 'error', @handleError, false
-    @connection.addEventListener 'close', =>
+    @connection.addEventListener 'close', (event) =>
       @connection = null
       @emit 'status',
         online: false
@@ -84,6 +88,15 @@ class WebSocketRuntime extends Base
       payload: payload
 
   handleError: (error) =>
+    if @protocol is 'noflo'
+      delete @protocol
+      @connecting = false
+      @connection = null
+      setTimeout =>
+        @connect()
+      , 1
+      return
+    @emit 'error', error
     @connection = null
     @connecting = false
 
