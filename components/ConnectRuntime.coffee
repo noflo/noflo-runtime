@@ -56,7 +56,7 @@ class ConnectRuntime extends noflo.Component
 
     rt = new Runtime definition
     rt.setParentElement @element if @element
-    rt.once 'connected', =>
+    rt.once 'capabilities', =>
       rt.removeListener 'error', onError
       @outPorts.runtime.beginGroup definition.id
       @outPorts.runtime.send rt

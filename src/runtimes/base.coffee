@@ -48,6 +48,7 @@ class BaseRuntime extends EventEmitter
     if command is 'runtime'
       for key, val of payload
         @definition[key] = val
+      @emit 'capabilities', payload.capabilities or []
     @emit 'runtime',
       command: command
       payload: payload
