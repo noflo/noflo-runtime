@@ -2,12 +2,16 @@ EventEmitter = require 'emitter'
 
 class BaseRuntime extends EventEmitter
   constructor: (@definition) ->
+    @definition.capabilities = [] unless definition.capabilities
     @graph = null
 
   setMain: (@graph) ->
 
   getType: -> @definition.protocol
   getAddress: -> @definition.address
+
+  canDo: (capability) ->
+    @definition.capabilities.indexOf(capability) isnt -1
 
   isConnected: -> false
 
@@ -41,6 +45,9 @@ class BaseRuntime extends EventEmitter
   getElement: ->
 
   recvRuntime: (command, payload) ->
+    if command is 'runtime'
+      for key, val of payload
+        @definition[key] = val
     @emit 'runtime',
       command: command
       payload: payload
