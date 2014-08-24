@@ -49,18 +49,20 @@ class ConnectRuntime extends noflo.Component
       @outPorts.error.disconnect()
       return
 
-    rt = new Runtime definition
-    rt.setParentElement @element if @element
-    try
-      rt.connect()
-    catch e
+    onError = (e) =>
       @outPorts.error.send e
       @outPorts.error.disconnect()
       return
 
-    @outPorts.runtime.beginGroup definition.id
-    @outPorts.runtime.send rt
-    @outPorts.runtime.endGroup()
-    @outPorts.runtime.disconnect()
+    rt = new Runtime definition
+    rt.setParentElement @element if @element
+    rt.once 'connected', =>
+      rt.removeListener 'error', onError
+      @outPorts.runtime.beginGroup definition.id
+      @outPorts.runtime.send rt
+      @outPorts.runtime.endGroup()
+      @outPorts.runtime.disconnect()
+    rt.once 'error', onError
+    rt.connect()
 
 exports.getComponent = -> new ConnectRuntime
