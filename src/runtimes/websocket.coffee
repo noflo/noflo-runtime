@@ -37,6 +37,8 @@ class WebSocketRuntime extends Base
 
     @container
 
+  isConnected: -> @connection isnt null
+
   connect: ->
     return if @connection or @connecting
 

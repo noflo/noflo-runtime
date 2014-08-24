@@ -9,6 +9,8 @@ class BaseRuntime extends EventEmitter
   getType: -> @definition.protocol
   getAddress: -> @definition.address
 
+  isConnected: -> false
+
   # Connect to the target runtime environment (iframe URL, WebSocket address)
   connect: ->
 

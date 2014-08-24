@@ -4,11 +4,14 @@ class IframeRuntime extends Base
   constructor: (definition) ->
     @origin = window.location.origin
     @connecting = false
+    @connected = false
     @buffer = []
     @iframe = null
     super definition
 
   getElement: -> @iframe
+
+  isConnected: -> @connected
 
   setMain: (graph) ->
     if @graph
@@ -56,6 +59,7 @@ class IframeRuntime extends Base
 
   disconnect: ->
     @iframe.removeEventListener 'load', @onLoaded, false
+    @connected = false
 
     # Stop listening to messages
     window.removeEventListener 'message', @onMessage, false
@@ -68,6 +72,7 @@ class IframeRuntime extends Base
   # Called every time the iframe has loaded successfully
   onLoaded: =>
     @connecting = false
+    @connected = true
     @emit 'status',
       online: true
       label: 'connected'
