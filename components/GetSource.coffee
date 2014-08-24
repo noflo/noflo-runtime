@@ -73,7 +73,7 @@ class GetSource extends noflo.AsyncComponent
         return callback()
 
       if rounds <= 0
-        return callback new Error 'Runtime didn\'t provide source in time'
+        return callback new Error "Runtime didn't provide source for #{name} in time"
 
       setTimeout poll, 100
     setTimeout poll, 200
