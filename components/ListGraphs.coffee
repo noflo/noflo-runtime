@@ -26,6 +26,8 @@ class ListGraphs extends noflo.Component
         required: false
 
     @inPorts.on 'runtime', 'data', (@runtime) =>
+      unless @runtime.canDo 'protocol:graph'
+        return @error new Error "Runtime #{@runtime.definition.id} cannot list graphs"
       @subscribe @runtime
     @inPorts.on 'list', 'data', =>
       do @list

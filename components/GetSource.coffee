@@ -18,6 +18,8 @@ class GetSource extends noflo.AsyncComponent
         description: 'Runtime to communicate with'
         process: (event, payload) =>
           return unless event is 'data'
+          unless payload.canDo 'component:getsource'
+            return @error new Error "Runtime #{payload.definition.id} cannot get sources"
           @subscribe payload
     @outPorts = new noflo.OutPorts
       source:

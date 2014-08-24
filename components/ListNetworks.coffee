@@ -26,6 +26,8 @@ class ListNetworks extends noflo.Component
         required: false
 
     @inPorts.on 'runtime', 'data', (@runtime) =>
+      unless @runtime.canDo 'protocol:network'
+        return @error new Error "Runtime #{@runtime.definition.id} cannot list networks"
       @subscribe @runtime
     @inPorts.on 'list', 'data', =>
       do @list

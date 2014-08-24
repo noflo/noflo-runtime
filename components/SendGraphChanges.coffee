@@ -27,9 +27,13 @@ class SendGraphChanges extends noflo.Component
         datatype: 'bang'
         description: 'Notification that changes have been transmitted'
         required: false
+      error:
+        datatype: 'object'
 
     @inPorts.on 'runtime', 'data', (@runtime) =>
       @changes = []
+      unless @runtime.canDo 'protocol:graph'
+        return @error new Error "Runtime #{@runtime.definition.id} cannot update graphs"
       do @subscribe
     @inPorts.on 'graph', 'data', (graph) =>
       do @unsubscribe if @graph
