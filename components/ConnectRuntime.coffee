@@ -18,7 +18,15 @@ class ConnectRuntime extends noflo.Component
       runtime:
         datatype: 'object'
         description: 'FBP Runtime instance'
-        required: true
+        required: false
+      connected:
+        datatype: 'object'
+        description: 'Connected FBP Runtime instance'
+        required: false
+      disconnected:
+        datatype: 'object'
+        description: 'Disconnected FBP Runtime instance'
+        required: false
       error:
         datatype: 'object'
         description: 'Runtime connection error'
@@ -50,6 +58,10 @@ class ConnectRuntime extends noflo.Component
       return
 
     onError = (e) =>
+      @outPorts.disconnected.beginGroup definition.id
+      @outPorts.disconnected.send rt
+      @outPorts.disconnected.endGroup()
+      @outPorts.disconnected.disconnect()
       @outPorts.error.send e
       @outPorts.error.disconnect()
       return
@@ -58,11 +70,15 @@ class ConnectRuntime extends noflo.Component
     rt.setParentElement @element if @element
     rt.once 'capabilities', =>
       rt.removeListener 'error', onError
-      @outPorts.runtime.beginGroup definition.id
-      @outPorts.runtime.send rt
-      @outPorts.runtime.endGroup()
-      @outPorts.runtime.disconnect()
+      @outPorts.connected.beginGroup definition.id
+      @outPorts.connected.send rt
+      @outPorts.connected.endGroup()
+      @outPorts.connected.disconnect()
     rt.once 'error', onError
     rt.connect()
+    @outPorts.runtime.beginGroup definition.id
+    @outPorts.runtime.send rt
+    @outPorts.runtime.endGroup()
+    @outPorts.runtime.disconnect()
 
 exports.getComponent = -> new ConnectRuntime
