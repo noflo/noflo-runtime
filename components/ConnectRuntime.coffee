@@ -19,6 +19,10 @@ class ConnectRuntime extends noflo.Component
         datatype: 'object'
         description: 'FBP Runtime instance'
         required: true
+      unavailable:
+        datatype: 'object'
+        description: 'Unavailable FBP Runtime instance'
+        required: true
       error:
         datatype: 'object'
         description: 'Runtime connection error'
@@ -52,6 +56,12 @@ class ConnectRuntime extends noflo.Component
     onError = (e) =>
       @outPorts.error.send e
       @outPorts.error.disconnect()
+
+      return unless rt
+      @outPorts.unavailable.beginGroup definition.id
+      @outPorts.unavailable.send rt
+      @outPorts.unavailable.endGroup()
+      @outPorts.unavailable.disconnect()
       return
 
     rt = new Runtime definition
