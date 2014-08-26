@@ -27,7 +27,8 @@
     "src/runtimes/websocket.coffee",
     "src/runtimes/microflo.coffee",
     "index.js",
-    "components/GetSource.coffee"
+    "components/GetSource.coffee",
+    "components/ListenNetwork.coffee"
   ],
   "json": [
     "component.json"
@@ -40,6 +41,7 @@
       "ListGraphs": "components/ListGraphs.coffee",
       "ListNetworks": "components/ListNetworks.coffee",
       "ListenLibrary": "components/ListenLibrary.coffee",
+      "ListenNetwork": "components/ListenNetwork.coffee",
       "ListenProcessErrors": "components/ListenProcessErrors.coffee",
       "ListenRuntime": "components/ListenRuntime.coffee",
       "SendGraphChanges": "components/SendGraphChanges.coffee"
