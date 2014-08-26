@@ -43,6 +43,7 @@
       "ListGraphs": "components/ListGraphs.coffee",
       "ListNetworks": "components/ListNetworks.coffee",
       "ListenLibrary": "components/ListenLibrary.coffee",
+      "ListenNetwork": "components/ListenNetwork.coffee",
       "ListenProcessErrors": "components/ListenProcessErrors.coffee",
       "ListenRuntime": "components/ListenRuntime.coffee",
       "SendGraphChanges": "components/SendGraphChanges.coffee"
