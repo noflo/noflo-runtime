@@ -25,6 +25,10 @@ class ConnectRuntime extends noflo.Component
         datatype: 'object'
         description: 'FBP Runtime instance'
         required: true
+      connected:
+        datatype: 'object'
+        description: 'Connected FBP Runtime instance'
+        required: true
       unavailable:
         datatype: 'object'
         description: 'Unavailable FBP Runtime instance'
@@ -84,10 +88,10 @@ class ConnectRuntime extends noflo.Component
     onCapabilities = =>
       clearTimeout timeout if timeout
       rt.removeListener 'error', onError
-      @outPorts.runtime.beginGroup definition.id
-      @outPorts.runtime.send rt
-      @outPorts.runtime.endGroup()
-      @outPorts.runtime.disconnect()
+      @outPorts.connected.beginGroup definition.id
+      @outPorts.connected.send rt
+      @outPorts.connected.endGroup()
+      @outPorts.connected.disconnect()
 
     rt = new Runtime definition
     rt.setParentElement @element if @element
@@ -95,5 +99,9 @@ class ConnectRuntime extends noflo.Component
     rt.once 'error', onError
     timeout = setTimeout onTimeout, @timeout
     rt.connect()
+    @outPorts.runtime.beginGroup definition.id
+    @outPorts.runtime.send rt
+    @outPorts.runtime.endGroup()
+    @outPorts.runtime.disconnect()
 
 exports.getComponent = -> new ConnectRuntime
