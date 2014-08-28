@@ -24,15 +24,15 @@ class ConnectRuntime extends noflo.Component
       runtime:
         datatype: 'object'
         description: 'FBP Runtime instance'
-        required: true
+        required: false
       connected:
         datatype: 'object'
         description: 'Connected FBP Runtime instance'
-        required: true
+        required: false
       unavailable:
         datatype: 'object'
         description: 'Unavailable FBP Runtime instance'
-        required: true
+        required: false
       error:
         datatype: 'object'
         description: 'Runtime connection error'
