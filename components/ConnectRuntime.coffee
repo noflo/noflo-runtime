@@ -97,7 +97,7 @@ class ConnectRuntime extends noflo.Component
     rt.setParentElement @element if @element
     rt.once 'capabilities', onCapabilities
     rt.once 'error', onError
-    timeout = setTimeout onTimeout, @timeout
+    timeout = setTimeout onTimeout, @timeout unless definition.protocol is 'iframe'
     @outPorts.runtime.beginGroup definition.id
     @outPorts.runtime.send rt
     @outPorts.runtime.endGroup()
