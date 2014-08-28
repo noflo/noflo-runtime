@@ -66,6 +66,7 @@ class ConnectRuntime extends noflo.Component
 
     onError = (e) =>
       clearTimeout timeout if timeout
+      rt.removeListener 'capabilities', onCapabilities
       if rt and @outPorts.unavailable.isAttached()
         @outPorts.unavailable.beginGroup definition.id
         @outPorts.unavailable.send rt
