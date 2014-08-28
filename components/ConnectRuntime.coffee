@@ -54,14 +54,14 @@ class ConnectRuntime extends noflo.Component
       return
 
     onError = (e) =>
+      if rt and @outPorts.unavailable.isAttached()
+        @outPorts.unavailable.beginGroup definition.id
+        @outPorts.unavailable.send rt
+        @outPorts.unavailable.endGroup()
+        @outPorts.unavailable.disconnect()
+        return
       @outPorts.error.send e
       @outPorts.error.disconnect()
-
-      return unless rt
-      @outPorts.unavailable.beginGroup definition.id
-      @outPorts.unavailable.send rt
-      @outPorts.unavailable.endGroup()
-      @outPorts.unavailable.disconnect()
       return
 
     rt = new Runtime definition
