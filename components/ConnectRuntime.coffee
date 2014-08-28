@@ -98,10 +98,10 @@ class ConnectRuntime extends noflo.Component
     rt.once 'capabilities', onCapabilities
     rt.once 'error', onError
     timeout = setTimeout onTimeout, @timeout
-    rt.connect()
     @outPorts.runtime.beginGroup definition.id
     @outPorts.runtime.send rt
     @outPorts.runtime.endGroup()
     @outPorts.runtime.disconnect()
+    rt.connect()
 
 exports.getComponent = -> new ConnectRuntime
