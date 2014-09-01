@@ -24,8 +24,6 @@ exports.getComponent = () ->
     @runtime = runtime
     @listener = (message) =>
       return unless message.command is 'processerror'
-      console.log "got error message : "
-      console.log JSON.stringify message
       @outPorts.process.send message.payload.id
       @outPorts.message.send message.payload.error
       @outPorts.process.disconnect()
