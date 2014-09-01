@@ -39,6 +39,7 @@ class SendGraphChanges extends noflo.Component
       do @unsubscribe if @graph
       @changes = []
       @graph = graph
+      @graphId = if @graph.properties.library? then "#{@graph.properties.library}/#{@graph.properties.id}" else @graph.properties.id
       do @subscribe
 
   subscribe: ->
@@ -110,25 +111,25 @@ class SendGraphChanges extends noflo.Component
       id: node.id
       component: node.component
       metadata: node.metadata
-      graph: @graph.properties.id
+      graph: @graphId
 
   removeNode: (node) =>
     @registerChange 'removenode',
       id: node.id
-      graph: @graph.properties.id
+      graph: @graphId
 
   renameNode: (from, to) =>
     @registerChange 'renamenode',
       from: from
       to: to
-      graph: @graph.properties.id
+      graph: @graphId
 
   changeNode: (node) =>
     key = 'changenode- ' + node.id
     metadata =
       id: node.id
       metadata: node.metadata
-      graph: @graph.properties.id
+      graph: @graphId
     if @changesStates[key] is undefined
       @changesStates[key] = @registerChange 'changenode', metadata
     else
@@ -143,7 +144,7 @@ class SendGraphChanges extends noflo.Component
         node: edge.to.node
         port: edge.to.port
       metadata: edge.metadata
-      graph: @graph.properties.id
+      graph: @graphId
 
   removeEdge: (edge) =>
     @registerChange 'removeedge',
@@ -154,7 +155,7 @@ class SendGraphChanges extends noflo.Component
         node: edge.to.node
         port: edge.to.port
       metadata: edge.metadata
-      graph: @graph.properties.id
+      graph: @graphId
 
   changeEdge: (edge) =>
     @registerChange 'changeedge',
@@ -165,7 +166,7 @@ class SendGraphChanges extends noflo.Component
         node: edge.to.node
         port: edge.to.port
       metadata: edge.metadata
-      graph: @graph.properties.id
+      graph: @graphId
 
   addInitial: (iip) =>
     @registerChange 'addinitial',
@@ -175,14 +176,14 @@ class SendGraphChanges extends noflo.Component
         node: iip.to.node
         port: iip.to.port
       metadata: iip.metadata
-      graph: @graph.properties.id
+      graph: @graphId
 
   removeInitial: (iip) =>
     @registerChange 'removeinitial',
       tgt:
         node: iip.to.node
         port: iip.to.port
-      graph: @graph.properties.id
+      graph: @graphId
 
   addInport: (pub, priv) =>
     @registerChange 'addinport',
@@ -190,18 +191,18 @@ class SendGraphChanges extends noflo.Component
       node: priv.process
       port: priv.port
       metadata: priv.metadata
-      graph: @graph.properties.id
+      graph: @graphId
 
   removeInport: (pub) =>
     @registerChange 'removeinport',
       public: pub
-      graph: @graph.properties.id
+      graph: @graphId
 
   renameInport: (oldPub, newPub) =>
     @registerChange 'renameinport',
       from: oldPub
       to: newPub
-      graph: @graph.properties.id
+      graph: @graphId
 
   addOutport: (pub, priv) =>
     @registerChange 'addoutport',
@@ -209,43 +210,43 @@ class SendGraphChanges extends noflo.Component
       node: priv.process
       port: priv.port
       metadata: priv.metadata
-      graph: @graph.properties.id
+      graph: @graphId
 
   removeOutport: (pub) =>
     @registerChange 'removeoutport',
       public: pub
-      graph: @graph.properties.id
+      graph: @graphId
 
   renameOutport: (oldPub, newPub) =>
     @registerChange 'renameoutport',
       from: oldPub
       to: newPub
-      graph: @graph.properties.id
+      graph: @graphId
 
   addGroup: (group) =>
     @registerChange 'addgroup',
       name: group.name
       nodes: group.nodes
       metadata: group.metadata
-      graph: @graph.properties.id
+      graph: @graphId
 
   removeGroup: (group) =>
     @registerChange 'removegroup',
       name: group.name
-      graph: @graph.properties.id
+      graph: @graphId
 
   renameGroup: (oldName, newName) =>
     @registerChange 'renamegroup',
       from: oldName
       to: newName
-      graph: @graph.properties.id
+      graph: @graphId
 
   changeGroup: (group, before) =>
     key = 'changegroup-' + group.name
     metadata =
       name: group.name
       metadata: group.metadata
-      graph: @graph.properties.id
+      graph: @graphId
     if @changesStates[key] is undefined
       @changesStates[key] = @registerChange 'changegroup', metadata
     else
@@ -256,7 +257,7 @@ class SendGraphChanges extends noflo.Component
     while @changes.length
       change = @changes.shift()
       @runtime.sendGraph change.topic, change.payload
-    @outPorts.sent.beginGroup @graph.properties.id if @graph
+    @outPorts.sent.beginGroup @graphId if @graph
     @outPorts.sent.send true
     @outPorts.sent.endGroup() if @graph
     @outPorts.queued.send @changes.length
