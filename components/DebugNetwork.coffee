@@ -29,8 +29,10 @@ exports.getComponent = () ->
     out: 'sent'
   , (data, groups, out) ->
     return unless c.params.runtime? and c.params.graph?
+    graph = c.params.graph
+    graphId = if graph.properties.library? then "#{graph.properties.library}/#{graph.properties.id}" else graph.properties.id
     c.params.runtime.sendNetwork 'debug',
-      graph: c.params.graph.properties.id
+      graph: graphId
       enable: data
     out.send true
 
