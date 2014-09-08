@@ -8,34 +8,36 @@ exports.getComponent = () ->
     datatype: 'object'
     description: 'Runtime to listen from'
     process: (event, payload) ->
-      return unless payload is 'data'
-      c.updateListeners payload, c.network
+      return unless event is 'data'
+      c.updateListeners payload, c.graph
   c.inPorts.add 'graph',
     datatype: 'object'
     description: 'Graph to listen to'
     process: (event, payload) ->
-      return unless payload is 'data'
+      return unless event is 'data'
       c.updateListeners c.runtime, payload
 
   c.outPorts.add 'packet',
     datatype: 'object'
 
-  c.updateListeners = (runtime, network) ->
-    @runtime.removeListeners 'network', @onNetworkPacket if @runtime
+  c.updateListeners = (runtime, graph) ->
+    @runtime.removeListener 'network', @onNetworkPacket if @runtime?
     @runtime = runtime
     @graph = graph
+    return unless @graph? and @runtime?
+    @graphId = if @graph.properties.library? then "#{@graph.properties.library}/#{@graph.properties.id}" else @graph.properties.id
     @runtime.on 'network', @onNetworkPacket if @runtime
 
   c.onNetworkPacket = ({command, payload}) =>
-    return unless command is 'network'
-    return unless payload.id and @graph and payload.id == @graph.id
-    @outPorts.packet.send
+    return unless payload.graph
+    return unless payload.graph == c.graphId
+    c.outPorts.packet.send
       edge: payload.id
       type: command
       group: if payload.group? then payload.group else ''
       data: if payload.data? then payload.data else ''
       subgraph: if payload.subgraph? then payload.subgraph else ''
-      runtime: @runtime.definition.id
+      runtime: c.runtime.definition.id
 
   c.shutdown = () ->
     @updateListeners null, null
