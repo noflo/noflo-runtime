@@ -30,7 +30,7 @@ exports.getComponent = () ->
   , (data, groups, out) ->
     return unless c.params.runtime? and c.params.graph?
     c.params.runtime.sendNetwork 'debug',
-      graph: c.params.graph.properties.id
+      graph: c.params.graph.name or c.params.graph.properties.id
       enable: data
     out.send true
 
