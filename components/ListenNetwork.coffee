@@ -8,13 +8,13 @@ exports.getComponent = () ->
     datatype: 'object'
     description: 'Runtime to listen from'
     process: (event, payload) ->
-      return unless payload is 'data'
+      return unless event is 'data'
       c.updateListeners payload, c.network
   c.inPorts.add 'graph',
     datatype: 'object'
     description: 'Graph to listen to'
     process: (event, payload) ->
-      return unless payload is 'data'
+      return unless event is 'data'
       c.updateListeners c.runtime, payload
 
   c.outPorts.add 'packet',
