@@ -21,23 +21,22 @@ exports.getComponent = () ->
     datatype: 'object'
 
   c.updateListeners = (runtime, graph) ->
-    @runtime.removeListener 'network', @onNetworkPacket if @runtime
-    @runtime = runtime
-    @graph = graph
-    @runtime.on 'network', @onNetworkPacket if @runtime
+    c.runtime.removeListener 'network', c.onNetworkPacket if c.runtime
+    c.runtime = runtime
+    c.graph = graph
+    c.runtime.on 'network', c.onNetworkPacket if c.runtime
 
-  c.onNetworkPacket = ({command, payload}) =>
-    return unless command is 'network'
-    return unless payload.id and @graph and payload.id is @graph.name
-    @outPorts.packet.send
+  c.onNetworkPacket = ({command, payload}) ->
+    return if not payload.graph or not c.graph or payload.graph isnt c.graph.name
+    c.outPorts.packet.send
       edge: payload.id
       type: command
       group: if payload.group? then payload.group else ''
       data: if payload.data? then payload.data else ''
       subgraph: if payload.subgraph? then payload.subgraph else ''
-      runtime: @runtime.definition.id
+      runtime: c.runtime.definition.id
 
-  c.shutdown = () ->
-    @updateListeners null, null
+  c.shutdown = ->
+    c.updateListeners null, null
 
   c
