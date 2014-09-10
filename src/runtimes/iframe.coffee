@@ -73,13 +73,14 @@ class IframeRuntime extends Base
   onLoaded: =>
     @connecting = false
     @connected = true
+
+    # Perform capability discovery
+    @send 'runtime', 'getruntime', null
+
     @emit 'status',
       online: true
       label: 'connected'
     @emit 'connected'
-
-    # Perform capability discovery
-    @send 'runtime', 'getruntime', null
 
     @flush()
 
