@@ -29,14 +29,14 @@ class BaseRuntime extends EventEmitter
     unless @graph
       throw new Error 'No graph defined for execution'
     @sendNetwork 'start',
-      graph: @graph.properties.id
+      graph: @graph.name or @graph.properties.id
 
   # Stop a NoFlo network
   stop: ->
     unless @graph
       throw new Error 'No graph defined for execution'
     @sendNetwork 'stop',
-      graph: @graph.properties.id
+      graph: @graph.name or @graph.properties.id
 
   # Set the parent element that some runtime types need
   setParentElement: (parent) ->
