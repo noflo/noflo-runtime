@@ -31,6 +31,7 @@ class SendGraphChanges extends noflo.Component
         datatype: 'object'
 
     @inPorts.on 'runtime', 'data', (@runtime) =>
+      return unless @runtime
       @changes = []
       unless @runtime.canDo 'protocol:graph'
         return @error new Error "Runtime #{@runtime.definition.id} cannot update graphs"
