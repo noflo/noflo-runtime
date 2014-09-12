@@ -40,6 +40,7 @@
     "components": {
       "DebugNetwork": "components/DebugNetwork.coffee",
       "GetSource": "components/GetSource.coffee",
+      "ListComponents": "components/ListComponents.coffee",
       "ListGraphs": "components/ListGraphs.coffee",
       "ListNetworks": "components/ListNetworks.coffee",
       "ListenLibrary": "components/ListenLibrary.coffee",

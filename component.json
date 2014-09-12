@@ -30,7 +30,8 @@
     "components/GetSource.coffee",
     "components/ListenNetwork.coffee",
     "components/SendComponent.coffee",
-    "components/SendGraph.coffee"
+    "components/SendGraph.coffee",
+    "components/ListComponents.coffee"
   ],
   "json": [
     "component.json"
@@ -40,6 +41,7 @@
       "ConnectRuntime": "components/ConnectRuntime.coffee",
       "DebugNetwork": "components/DebugNetwork.coffee",
       "GetSource": "components/GetSource.coffee",
+      "ListComponents": "components/ListComponents.coffee",
       "ListGraphs": "components/ListGraphs.coffee",
       "ListNetworks": "components/ListNetworks.coffee",
       "ListenLibrary": "components/ListenLibrary.coffee",
