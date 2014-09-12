@@ -28,7 +28,9 @@
     "src/runtimes/microflo.coffee",
     "index.js",
     "components/GetSource.coffee",
-    "components/ListenNetwork.coffee"
+    "components/ListenNetwork.coffee",
+    "components/SendComponent.coffee",
+    "components/SendGraph.coffee"
   ],
   "json": [
     "component.json"
@@ -44,6 +46,8 @@
       "ListenNetwork": "components/ListenNetwork.coffee",
       "ListenProcessErrors": "components/ListenProcessErrors.coffee",
       "ListenRuntime": "components/ListenRuntime.coffee",
+      "SendComponent": "components/SendComponent.coffee",
+      "SendGraph": "components/SendGraph.coffee",
       "SendGraphChanges": "components/SendGraphChanges.coffee"
     }
   }
