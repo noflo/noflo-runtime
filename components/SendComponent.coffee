@@ -47,14 +47,14 @@ exports.getComponent = ->
     if c.params.runtime.isConnected()
       sendComponent data, c.params.runtime, (err) ->
         return callback err if err
-        out.send component
+        out.send data
         do callback
       return
 
     c.params.runtime.once 'capabilities', ->
       sendComponent data, c.params.runtime, (err) ->
         return callback err if err
-        out.send component
+        out.send data
         do callback
 
   c

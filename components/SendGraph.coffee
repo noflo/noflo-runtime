@@ -80,14 +80,14 @@ exports.getComponent = ->
     if c.params.runtime.isConnected()
       sendGraph data, c.params.runtime, (err) ->
         return callback err if err
-        out.send graph
+        out.send data
         do callback
       return
 
     c.params.runtime.once 'capabilities', ->
       sendGraph data, c.params.runtime, (err) ->
         return callback err if err
-        out.send graph
+        out.send data
         do callback
 
   c
