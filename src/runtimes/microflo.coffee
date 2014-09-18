@@ -8,6 +8,14 @@ class MicroFloRuntime extends Base
     @connecting = false
     @buffer = []
     @container = null
+
+    # MicroFlo things
+    @transport = null
+    @microfloGraph = null
+    @debugLevel = 'Error'
+
+    @on 'connected', @updatecontainer
+
     super definition
 
   getElement: -> @container
@@ -25,37 +33,42 @@ class MicroFloRuntime extends Base
     graph.on 'changeProperties', @updatecontainer
     super graph
 
+  openComm: (serialPort, baudRate) ->
+      microflo.serial.openTransport serialPort, baudRate, (err, transport) =>
+        @connecting = false
+        if err
+          console.log 'MicroFlo error:', err
+          @emit 'error', err
+          return
+        @transport = transport
+
+        @emit 'status',
+          online: true
+          label: 'connected'
+        @emit 'connected'
+
+        # Perform capability discovery
+        @send 'runtime', 'getruntime', null
+        @flush()
+
   connect: ->
-    unless @container
-      throw new Error 'Unable to connect without a parent element'
-
-    # Make sure serial transport is closed before reopening
-    if @getSerial and @getSerial()
-      @getSerial().close () ->
-        #
-
-    # Let the UI know we're connecting
+    return if @connecting
     @connecting = true
-    @emit 'status',
-      online: false
-      label: 'connecting'
+    @microfloGraph = {}
 
-    # Set an ID for targeting purposes
-    @container.id = 'preview-container'
-
-    # Update container contents as needed
-    @on 'connected', @updatecontainer
-
-    # Setup runtime
     # TODO: remove hardcoding of baudrate and debugLevel
     baudRate = 9600
-    debugLevel = 'Error'
-    address = @getAddress()
-    serialPort = address.replace 'serial://', ''
-    @setupRuntime baudRate, serialPort, debugLevel
+    serialPort = @getAddress().replace 'serial://', ''
 
-    # HACK: sends initial message, which hooks up receiving as well
-    @onLoaded()
+    # Make sure serial transport is closed before reopening
+    if @transport
+      @transport.close () =>
+        @transport = null
+        @openComm serialPort, baudRate
+    else
+        f = () =>
+          @openComm serialPort, baudRate
+        setTimeout f, 0
 
   disconnect: ->
     onClosed = (success) ->
@@ -64,38 +77,15 @@ class MicroFloRuntime extends Base
         label: 'disconnected'
       @emit 'disconnected'
 
-      if @getSerial and @getSerial()
-        @getSerial().close onClosed
+      if @transport
+        @transport.close onClosed
       else
         onClosed false
 
   updatecontainer: =>
-    return if !@container or !@graph
-    # TEMP
-
-  setupRuntime: (baudRate, serialPort, debugLevel) ->
-    @microfloGraph = {}
-    # FIXME: nasty and racy, should pass callback and only then continue
-    @debugLevel = debugLevel
-    @getSerial = null
-    try
-      @getSerial = microflo.serial.openTransport serialPort, baudRate, (err, transport) ->
-        console.log err, transport
-    catch e
-      console.log 'MicroFlo setup:', e
-
-  # Called every time the container has loaded successfully
-  onLoaded: =>
-    @connecting = false
-    @emit 'status',
-      online: true
-      label: 'connected'
-    @emit 'connected'
-
-    # Perform capability discovery
-    @send 'runtime', 'getruntime', null
-
-    @flush()
+    return unless @container
+    # Set an ID for targeting purposes
+    @container.id = 'preview-container'
 
   send: (protocol, command, payload) ->
     msg =
@@ -106,8 +96,9 @@ class MicroFloRuntime extends Base
       @buffer.push msg
       return
 
+    console.log 'MicroFlo send:', msg
     sendFunc = (response) =>
-      console.log 'sendFunc', response
+      console.log 'MicroFlo receive:', response
       @onMessage { data: response }
     conn = { send: sendFunc }
     try
