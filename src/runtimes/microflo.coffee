@@ -29,6 +29,11 @@ class MicroFloRuntime extends Base
     unless @container
       throw new Error 'Unable to connect without a parent element'
 
+    # Make sure serial transport is closed before reopening
+    if @getSerial and @getSerial()
+      @getSerial().close () ->
+        #
+
     # Let the UI know we're connecting
     @connecting = true
     @emit 'status',
@@ -53,15 +58,16 @@ class MicroFloRuntime extends Base
     @onLoaded()
 
   disconnect: ->
-    #@container.removeEventListener 'load', @onLoaded, false
+    onClosed = (success) ->
+      @emit 'status',
+        online: false
+        label: 'disconnected'
+      @emit 'disconnected'
 
-    # Stop listening to messages
-    # window.removeEventListener 'message', @onMessage, false
-
-    @emit 'status',
-      online: false
-      label: 'disconnected'
-    @emit 'disconnected'
+      if @getSerial and @getSerial()
+        @getSerial().close onClosed
+      else
+        onClosed false
 
   updatecontainer: =>
     return if !@container or !@graph
@@ -73,7 +79,8 @@ class MicroFloRuntime extends Base
     @debugLevel = debugLevel
     @getSerial = null
     try
-      @getSerial = microflo.serial.openTransport serialPort, baudRate
+      @getSerial = microflo.serial.openTransport serialPort, baudRate, (err, transport) ->
+        console.log err, transport
     catch e
       console.log 'MicroFlo setup:', e
 
