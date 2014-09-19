@@ -1,7 +1,5 @@
 noflo = require 'noflo'
 
-# @runtime noflo-browser
-
 class ConnectRuntime extends noflo.Component
   constructor: ->
     @element = null
@@ -58,7 +56,7 @@ class ConnectRuntime extends noflo.Component
     return unless @validate definition
 
     try
-      Runtime = require "/noflo-noflo-runtime/src/runtimes/#{definition.protocol}"
+      Runtime = require "../src/runtimes/#{definition.protocol}"
     catch e
       @outPorts.error.send new Error "Protocol #{definition.protocol} is not supported"
       @outPorts.error.disconnect()

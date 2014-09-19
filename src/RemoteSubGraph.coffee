@@ -1,8 +1,4 @@
 noflo = require 'noflo'
-if noflo.isBrowser()
-  prefix = '/noflo-noflo-runtime/src/'
-else
-  prefix = './'
 
 class RemoteSubGraph extends noflo.Component
 
@@ -25,7 +21,7 @@ class RemoteSubGraph extends noflo.Component
   setDefinition: (definition) ->
     @definition = definition
     try
-      Runtime = require "#{prefix}runtimes/#{definition.protocol}"
+      Runtime = require "./runtimes/#{definition.protocol}"
     catch e
       throw new Error "'#{@definition.protocol}' protocol not supported"
     @runtime = new Runtime @definition

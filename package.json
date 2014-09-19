@@ -40,6 +40,7 @@
   "noflo": {
     "loader": "src/ComponentLoader.coffee",
     "components": {
+      "ConnectRuntime": "components/ConnectRuntime.coffee",
       "DebugNetwork": "components/DebugNetwork.coffee",
       "GetSource": "components/GetSource.coffee",
       "ListComponents": "components/ListComponents.coffee",
