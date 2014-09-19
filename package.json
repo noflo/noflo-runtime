@@ -38,6 +38,7 @@
     "test": "grunt test"
   },
   "noflo": {
+    "loader": "src/ComponentLoader.coffee",
     "components": {
       "DebugNetwork": "components/DebugNetwork.coffee",
       "GetSource": "components/GetSource.coffee",
