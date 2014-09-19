@@ -23,7 +23,7 @@ class RemoteSubGraph extends noflo.Component
     try
       Runtime = require "./runtimes/#{definition.protocol}"
     catch e
-      throw new Error "'#{@definition.protocol}' protocol not supported"
+      throw new Error "'#{@definition.protocol}' protocol not supported: " + e.message
     @runtime = new Runtime @definition
 
     @description = definition.description || ''
