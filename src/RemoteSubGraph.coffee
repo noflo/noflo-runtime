@@ -1,6 +1,6 @@
 noflo = require 'noflo'
 if noflo.isBrowser()
-  prefix = 'noflo-noflo-runtime/src/'
+  prefix = '/noflo-noflo-runtime/src/'
 else
   prefix = './'
 
