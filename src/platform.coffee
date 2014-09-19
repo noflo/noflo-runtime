@@ -25,7 +25,7 @@ if not isBrowser()
           @connection = null
           @emit 'close'
         connection.on 'message', (message) =>
-          message.data = message.utf8Data;
+          message.data = message.utf8Data
           @emit 'message', message
 
         @emit 'open'

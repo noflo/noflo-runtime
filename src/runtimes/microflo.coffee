@@ -36,23 +36,23 @@ class MicroFloRuntime extends Base
     super graph
 
   openComm: (serialPort, baudRate) ->
-      microflo.serial.openTransport serialPort, baudRate, (err, transport) =>
-        @connecting = false
-        if err
-          console.log 'MicroFlo error:', err
-          @emit 'error', err
-          return
-        @transport = transport
+    microflo.serial.openTransport serialPort, baudRate, (err, transport) =>
+      @connecting = false
+      if err
+        console.log 'MicroFlo error:', err
+        @emit 'error', err
+        return
+      @transport = transport
 
-        # Perform capability discovery
-        @send 'runtime', 'getruntime', null
+      # Perform capability discovery
+      @send 'runtime', 'getruntime', null
 
-        @emit 'status',
-          online: true
-          label: 'connected'
-        @emit 'connected'
+      @emit 'status',
+        online: true
+        label: 'connected'
+      @emit 'connected'
 
-        @flush()
+      @flush()
 
   connect: ->
     return if @connecting
@@ -69,9 +69,9 @@ class MicroFloRuntime extends Base
         @transport = null
         @openComm serialPort, baudRate
     else
-        f = () =>
-          @openComm serialPort, baudRate
-        setTimeout f, 0
+      f = () =>
+        @openComm serialPort, baudRate
+      setTimeout f, 0
 
   disconnect: ->
     onClosed = (success) ->
