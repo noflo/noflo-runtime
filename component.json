@@ -22,6 +22,7 @@
     "components/ListGraphs.coffee",
     "components/ListNetworks.coffee",
     "components/SendGraphChanges.coffee",
+    "src/platform.coffee",
     "src/runtimes/base.coffee",
     "src/runtimes/iframe.coffee",
     "src/runtimes/websocket.coffee",
