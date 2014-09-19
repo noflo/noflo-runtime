@@ -1,12 +1,15 @@
 noflo = require 'noflo'
-WebsocketRuntime = require './runtimes/websocket'
+if noflo.isBrowser()
+  prefix = 'noflo-noflo-runtime/src/'
+else
+  prefix = './'
 
 class RemoteSubGraph extends noflo.Component
 
   constructor: (metadata) ->
     metadata = {} unless metadata
 
-    @runtime = null 
+    @runtime = null
     @ready = true
 
     @inPorts = new noflo.InPorts
@@ -21,14 +24,17 @@ class RemoteSubGraph extends noflo.Component
 
   setDefinition: (definition) ->
     @definition = definition
-    throw new Error "'#{@definition.protocol}' protocol not supported" if @definition.protocol != 'websocket'
-    @runtime = new WebsocketRuntime @definition
+    try
+      Runtime = require "#{prefix}runtimes/#{definition.protocol}"
+    catch e
+      throw new Error "'#{@definition.protocol}' protocol not supported"
+    @runtime = new Runtime @definition
 
     @description = definition.description || ''
 
     @runtime.on 'capabilities', (capabilities) =>
       if 'protocol:runtime' not in capabilities
-        throw new Error "runtime #{@definition.id} does not declare protocol:runtime" 
+        throw new Error "runtime #{@definition.id} does not declare protocol:runtime"
 
     # TODO: make runtime base handle ports discovery similar to capabilities?
     @runtime.on 'runtime', (msg) =>
