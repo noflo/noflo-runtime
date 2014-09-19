@@ -1,4 +1,5 @@
 Base = require './base'
+platform = require '../platform'
 
 class WebSocketRuntime extends Base
   constructor: (definition) ->
@@ -43,9 +44,9 @@ class WebSocketRuntime extends Base
     return if @connection or @connecting
 
     if @protocol
-      @connection = new WebSocket @getAddress(), @protocol
+      @connection = new platform.WebSocket @getAddress(), @protocol
     else
-      @connection = new WebSocket @getAddress()
+      @connection = new platform.WebSocket @getAddress()
     @connection.addEventListener 'open', =>
       @connecting = false
 
@@ -61,7 +62,7 @@ class WebSocketRuntime extends Base
     , false
     @connection.addEventListener 'message', @handleMessage, false
     @connection.addEventListener 'error', @handleError, false
-    @connection.addEventListener 'close', (event) =>
+    @connection.addEventListener 'close', () =>
       @connection = null
       @emit 'status',
         online: false

@@ -1,6 +1,6 @@
-EventEmitter = require 'emitter'
+platform = require '../platform'
 
-class BaseRuntime extends EventEmitter
+class BaseRuntime extends platform.EventEmitter
   constructor: (@definition) ->
     @definition.capabilities = [] unless definition.capabilities
     @graph = null
