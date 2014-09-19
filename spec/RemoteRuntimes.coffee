@@ -16,11 +16,15 @@ describe 'Remote runtimes', ->
   port = 3888
 
   before (done) ->
-    utils.createServer port, (err, s) ->
-      server = s
+    if noflo.isBrowser()
+      console.log "WebSocket runtime should have been set up on #{port}"
       done()
+    else
+      utils.createServer port, (err, s) ->
+        server = s
+        done()
   after (done) ->
-    server.close()
+    server.close() if server
     done()
 
   describe 'RemoteSubGraph component', ->
