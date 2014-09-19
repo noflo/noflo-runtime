@@ -17,6 +17,7 @@ describe 'Remote runtimes', ->
 
   before (done) ->
     if noflo.isBrowser()
+      port = 3889
       console.log "WebSocket runtime should have been set up on #{port}"
       done()
     else
@@ -41,11 +42,12 @@ describe 'Remote runtimes', ->
     meta = {}
     readyEmitted = false
 
-    it 'should be instantiable', ->
+    it 'should be instantiable', (done) ->
       c = (RemoteSubGraph.getComponentForRuntime def)(meta)
       chai.expect(c).to.be.an.instanceof noflo.Component
       c.on 'ready', () ->
         readyEmitted = true
+        done()
     it 'should set description', ->
       chai.expect(c.description).to.equal def.description
     it 'should populate ports and go ready after connecting to remote', (done) ->
@@ -61,8 +63,10 @@ describe 'Remote runtimes', ->
     it 'sending data into local port should be echoed back', (done) ->
       input = noflo.internalSocket.createSocket()
       output = noflo.internalSocket.createSocket()
+      chai.expect(c.inPorts.in).to.be.an 'object'
       c.inPorts['in'].attach input
-      c.outPorts.out.attach output  
+      chai.expect(c.outPorts.out).to.be.an 'object'
+      c.outPorts.out.attach output
 
       output.on 'data', (data) ->
         chai.expect(data).to.deep.equal { test: true }
