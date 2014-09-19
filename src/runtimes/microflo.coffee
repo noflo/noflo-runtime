@@ -18,6 +18,8 @@ class MicroFloRuntime extends Base
 
     super definition
 
+  isConnected: -> @transport isnt null
+
   getElement: -> @container
 
   setParentElement: (parent) ->
@@ -42,13 +44,14 @@ class MicroFloRuntime extends Base
           return
         @transport = transport
 
+        # Perform capability discovery
+        @send 'runtime', 'getruntime', null
+
         @emit 'status',
           online: true
           label: 'connected'
         @emit 'connected'
 
-        # Perform capability discovery
-        @send 'runtime', 'getruntime', null
         @flush()
 
   connect: ->
