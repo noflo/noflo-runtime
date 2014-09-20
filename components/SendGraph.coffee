@@ -13,6 +13,8 @@ sendGraph = (graph, runtime, callback) ->
     id: graphId
     name: graph.name
     library: graph.properties.project
+    icon: graph.properties.icon or ''
+    description: graph.properties.description or ''
   for node in graph.nodes
     runtime.sendGraph 'addnode',
       id: node.id
