@@ -45,7 +45,8 @@ class MicroFloRuntime extends Base
       @transport = transport
 
       # Perform capability discovery
-      @send 'runtime', 'getruntime', null
+      @send 'runtime', 'getruntime',
+        secret: @definition.secret
 
       @emit 'status',
         online: true
