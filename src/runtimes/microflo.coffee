@@ -9,16 +9,13 @@ class MicroFloRuntime extends Base
     @container = null
 
     # MicroFlo things
-    @transport = null
-    @microfloGraph = null
-    @debugLevel = 'Error'
-    @simulator = null
+    @runtime = null
 
     @on 'connected', @updatecontainer
 
     super definition
 
-  isConnected: -> @transport isnt null
+  isConnected: -> @runtime isnt null
 
   getElement: -> @container
 
@@ -38,50 +35,58 @@ class MicroFloRuntime extends Base
   openComm: () ->
     address = @getAddress()
 
-    openFunc = null
+    getRuntime = null
     if address.indexOf('serial://') == 0
       serialPort = @getAddress().replace 'serial://', ''
       # TODO: remove hardcoding of baudrate
       baudRate = 9600
-      openFunc = (callback) =>
-        microflo.serial.openTransport serialPort, baudRate, callback
+      getRuntime = (callback) =>
+        microflo.serial.openTransport serialPort, baudRate, (err, transport) ->
+          return callback err if err
+          dev = new microflo.runtime.Runtime transport
+          return callback null, dev
     else if address.indexOf('simulator://') == 0
-      openFunc = (callback) =>
-        @simulator = new microflo.simulator.RuntimeSimulator
-        @simulator.start()
-        @microfloGraph = @simulator.graph # HACK
-        @simulator.comm.graph = @simulator.graph
-        return callback null, @simulator.transport
+      getRuntime = (callback) =>
+        sim = new microflo.simulator.RuntimeSimulator
+        sim.start()
+        #sim.device.graph = sim.graph
+        return callback null, sim
 
-    openFunc (err, transport) =>
-      @connecting = false
-      if err
-        console.log 'MicroFlo error:', err
-        @emit 'error', err
-        return
-      @transport = transport
+    getRuntime (err, runtime) =>
+      return @emit 'error', err if err
 
-      # Perform capability discovery
-      @send 'runtime', 'getruntime',
-        secret: @definition.secret
+      runtime.on 'message', (response) =>
+        @onMessage { data: response }
 
-      # FIXME: don't emit connected until we've started FBCS comm
-      @emit 'status',
-        online: true
-        label: 'connected'
-      @emit 'connected'
+      runtime.device.open () =>
+        @connecting = false
+        if err
+          console.log 'MicroFlo error:', err
+          @emit 'error', err
+          return
+        @runtime = runtime
 
-      @flush()
+        # Perform capability discovery
+        @send 'runtime', 'getruntime',
+          secret: @definition.secret
+
+        @emit 'status',
+          online: true
+          label: 'connected'
+        @emit 'connected'
+
+        @flush()
 
   connect: ->
     return if @connecting
     @connecting = true
-    @microfloGraph = {}
 
+    transport = runtime?.transport
+    @runtime?.stop()
+    @runtime = null
     # Make sure serial transport is closed before reopening
-    if @transport
-      @transport.close () =>
-        @transport = null
+    if transport
+      transport.close () =>
         @openComm()
     else
       f = () =>
@@ -91,14 +96,14 @@ class MicroFloRuntime extends Base
   disconnect: ->
 
     onClosed = (success) =>
-      @transport = null
+      @runtime = null
       @emit 'status',
         online: false
         label: 'disconnected'
       @emit 'disconnected'
 
-    if @transport
-      @transport.close onClosed
+    if @runtime
+      @runtime.transport.close onClosed
     else
       onClosed false
 
@@ -116,11 +121,8 @@ class MicroFloRuntime extends Base
       @buffer.push msg
       return
 
-    sendFunc = (response) =>
-      @onMessage { data: response }
-    conn = { send: sendFunc }
     try
-      microflo.runtime.handleMessage msg, conn, @microfloGraph, @transport, @debugLevel
+      @runtime.handleMessage msg
     catch e
       console.log e.stack
       console.log e
