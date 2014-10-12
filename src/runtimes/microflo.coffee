@@ -1,7 +1,6 @@
 Base = require './base'
 microflo = require 'microflo'
 
-
 # TODO: make this runtime be for every device that supports the same FBCS protocol as MicroFlo
 class MicroFloRuntime extends Base
   constructor: (definition) ->
@@ -13,6 +12,7 @@ class MicroFloRuntime extends Base
     @transport = null
     @microfloGraph = null
     @debugLevel = 'Error'
+    @simulator = null
 
     @on 'connected', @updatecontainer
 
@@ -35,8 +35,22 @@ class MicroFloRuntime extends Base
     graph.on 'changeProperties', @updatecontainer
     super graph
 
-  openComm: (serialPort, baudRate) ->
-    microflo.serial.openTransport serialPort, baudRate, (err, transport) =>
+  openComm: () ->
+    address = @getAddress()
+
+    openFunc = null
+    if address.indexOf('serial://') == 0
+      serialPort = @getAddress().replace 'serial://', ''
+      # TODO: remove hardcoding of baudrate
+      baudRate = 9600
+      openFunc = (callback) ->
+        microflo.serial.openTransport serialPort, baudRate, callback
+    else if address.indexOf('simulator://') == 0
+      openFunc = (callback) ->
+        @simulator = new microflo.simulator.RuntimeSimulator
+        callback null, @simulator.transport
+
+    openFunc (err, transport) =>
       @connecting = false
       if err
         console.log 'MicroFlo error:', err
@@ -48,6 +62,7 @@ class MicroFloRuntime extends Base
       @send 'runtime', 'getruntime',
         secret: @definition.secret
 
+      # FIXME: don't emit connected until we've started FBCS comm
       @emit 'status',
         online: true
         label: 'connected'
@@ -60,31 +75,29 @@ class MicroFloRuntime extends Base
     @connecting = true
     @microfloGraph = {}
 
-    # TODO: remove hardcoding of baudrate and debugLevel
-    baudRate = 9600
-    serialPort = @getAddress().replace 'serial://', ''
-
     # Make sure serial transport is closed before reopening
     if @transport
       @transport.close () =>
         @transport = null
-        @openComm serialPort, baudRate
+        @openComm()
     else
       f = () =>
-        @openComm serialPort, baudRate
+        @openComm()
       setTimeout f, 0
 
   disconnect: ->
-    onClosed = (success) ->
+
+    onClosed = (success) =>
+      @transport = null
       @emit 'status',
         online: false
         label: 'disconnected'
       @emit 'disconnected'
 
-      if @transport
-        @transport.close onClosed
-      else
-        onClosed false
+    if @transport
+      @transport.close onClosed
+    else
+      onClosed false
 
   updatecontainer: =>
     return unless @container

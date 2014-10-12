@@ -34,12 +34,12 @@ describe 'MicroFlo', ->
       chai.expect(runtime).to.be.an.instanceof Base
     it 'should not be connected initially', () ->
       chai.expect(runtime.isConnected()).to.equal false
-    it.skip 'should emit "connected" on connect()', (done) ->
+    it 'should emit "connected" on connect()', (done) ->
       runtime.on 'connected', () ->
         chai.expect(runtime.isConnected()).to.equal true
         done()
       runtime.connect()
-    it.skip 'should emit "disconnected" on disconnect()', (done) ->
+    it 'should emit "disconnected" on disconnect()', (done) ->
       runtime.on 'disconnected', () ->
         chai.expect(runtime.isConnected()).to.equal false
         done()
