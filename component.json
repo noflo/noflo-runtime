@@ -24,6 +24,7 @@
     "components/SendGraphChanges.coffee",
     "src/RemoteSubGraph.coffee",
     "src/platform.coffee",
+    "src/connection.coffee",
     "src/runtimes/base.coffee",
     "src/runtimes/iframe.coffee",
     "src/runtimes/websocket.coffee",
