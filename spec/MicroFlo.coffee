@@ -57,16 +57,19 @@ describe 'MicroFlo', ->
       graph = null
       it 'should start executing', (done) ->
         runtime = new Runtime def
-        runtime.on 'execution', (status) ->
-          done() if status.running
+        checkRunning = (status) ->
+          if status.running
+            runtime.removeListener 'execution', checkRunning
+            return done()
+        runtime.on 'execution', checkRunning
+
         noflo.graph.loadFBP blinky, (g) ->
           graph = g
           runtime.setMain graph 
           runtime.connect()
           connection.sendGraph graph, runtime, () ->
-            runtime.start() # does upload          
+            runtime.start() # does upload
 
     # TODO: in browser, test simulator UI able to blink an LED
     # TODO: test exported ports and sending data through
-
 
