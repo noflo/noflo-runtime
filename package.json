@@ -18,6 +18,7 @@
   ],
   "dependencies": {
     "coffee-script": "^1.8.0",
+    "microflo": "^0.3.6",
     "noflo": "~0.5.0",
     "websocket": "^1.0.8"
   },

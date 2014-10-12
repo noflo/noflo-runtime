@@ -30,7 +30,7 @@ describe 'Remote runtimes', ->
 
   describe 'RemoteSubGraph component', ->
     def =
-      label: "MicroFlo 222"
+      label: "NoFlo 222"
       description: "The first remote component in the world"
       type: "noflo"
       protocol: "websocket"
