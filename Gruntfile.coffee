@@ -45,13 +45,13 @@ module.exports = ->
       nodejs:
         src: ['spec/*.coffee']
         options:
-          reporter: 'dot'
+          reporter: 'spec'
 
     # BDD tests on browser
     mocha_phantomjs:
       options:
         output: 'spec/result.xml'
-        reporter: 'dot'
+        reporter: 'spec'
       all: ['spec/runner.html']
 
     # Coding standards
