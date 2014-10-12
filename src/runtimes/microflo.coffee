@@ -43,12 +43,15 @@ class MicroFloRuntime extends Base
       serialPort = @getAddress().replace 'serial://', ''
       # TODO: remove hardcoding of baudrate
       baudRate = 9600
-      openFunc = (callback) ->
+      openFunc = (callback) =>
         microflo.serial.openTransport serialPort, baudRate, callback
     else if address.indexOf('simulator://') == 0
-      openFunc = (callback) ->
+      openFunc = (callback) =>
         @simulator = new microflo.simulator.RuntimeSimulator
-        callback null, @simulator.transport
+        @simulator.start()
+        @microfloGraph = @simulator.graph # HACK
+        @simulator.comm.graph = @simulator.graph
+        return callback null, @simulator.transport
 
     openFunc (err, transport) =>
       @connecting = false
@@ -113,13 +116,11 @@ class MicroFloRuntime extends Base
       @buffer.push msg
       return
 
-    console.log 'MicroFlo send:', msg
     sendFunc = (response) =>
-      console.log 'MicroFlo receive:', response
       @onMessage { data: response }
     conn = { send: sendFunc }
     try
-      microflo.runtime.handleMessage msg, conn, @microfloGraph, @getSerial, @debugLevel
+      microflo.runtime.handleMessage msg, conn, @microfloGraph, @transport, @debugLevel
     catch e
       console.log e.stack
       console.log e
