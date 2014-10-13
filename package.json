@@ -19,7 +19,7 @@
   "dependencies": {
     "coffee-script": "^1.8.0",
     "microflo": "^0.3.6",
-    "noflo": "~0.5.0",
+    "noflo": "^0.5.9",
     "websocket": "^1.0.8"
   },
   "devDependencies": {
