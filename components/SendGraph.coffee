@@ -1,7 +1,7 @@
 noflo = require 'noflo'
 
 if noflo.isBrowser()
-  connection = require 'noflo-runtime/src/connection'
+  connection = require '../src/connection'
 else
   connection = require '../src/connection'
 
