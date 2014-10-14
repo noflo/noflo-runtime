@@ -4,6 +4,7 @@ EventEmitter = if isBrowser() then require('emitter') else require('events').Eve
 
 WebSocketServer = require('websocket').server
 http = require 'http'
+path = require 'path'
 
 normalizePorts = (ports) ->
   defaults =
@@ -131,9 +132,22 @@ createServer = (port, callback) ->
   server.listen port, (err) ->
     return callback err, server
 
+createNoFloServer = (port, callback) ->
+  runtime = require('noflo-runtime-websocket');
+  baseDir = path.join __dirname, '../'
+
+  server = http.createServer () ->
+  options =
+    baseDir: baseDir
+    captureOutput: false,
+    catchExceptions: false
+  rt = runtime server, options
+  server.listen port, () ->
+    return callback null, server
+
 module.exports =
   Echo: Echo
   Component: PseudoComponent
   Server: PseudoRuntime
   createServer: createServer
-
+  createNoFloServer: createNoFloServer

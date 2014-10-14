@@ -9,6 +9,7 @@ else
   RemoteSubGraph = require 'noflo-runtime/src/RemoteSubGraph'
   connection = require 'noflo-runtime/src/connection'
 
+
 # TODO: test the custom ComponentLoader
 # TODO: test whole connect/begin/endBracket/disconnect
 
@@ -119,6 +120,86 @@ describe 'Remote runtimes', ->
           c.runtime.setMain graph # XXX: neccesary/correct?
           connection.sendGraph graph, c.runtime, () ->
             c.runtime.start() # does actual upload, MicroFlo specific
+    it 'should have exported inport and outport', (done) ->
+      checkPorts = () ->
+        chai.expect(c.inPorts.ports).to.be.an 'object'
+        chai.expect(c.outPorts.ports).to.be.an 'object'
+        chai.expect(c.inPorts.ports['input']).to.be.an 'object'
+        chai.expect(c.outPorts.ports['output']).to.be.an 'object'
+        done()
+      if c.isReady()
+        checkPorts()
+      else
+        c.on 'ready', () ->
+          checkPorts()
+    it 'sending data into local port should be echoed back', (done) ->
+      input = noflo.internalSocket.createSocket()
+      output = noflo.internalSocket.createSocket()
+      c.inPorts.input.attach input
+      c.outPorts.output.attach output
+      # FIXME: is called multiple times, should not happen
+      output.once 'data', (data) ->
+        chai.expect(data).to.deep.equal 113
+        done()
+      input.send 113
+
+
+  describe 'NoFlo over Websocket in NoFlo', ->
+    server = null
+    c = null
+    port = 3891
+
+    echoNoflo = """
+    INPORT=One.IN:INPUT
+    OUTPORT=Three.OUT:OUTPUT
+    One(core/Repeat) OUT -> IN Two(core/Repeat) OUT -> IN Three(core/Repeat)
+    '1000'-> INTERVAL keepalive(core/RunInterval) OUT -> IN dummy(core/Repeat), 'foo' -> START keepalive
+    """
+    meta = {}
+    readyEmitted = false
+
+    before (done) ->
+      if noflo.isBrowser()
+        port = 3892
+        console.log "WebSocket NoFlo runtime should have been set up on #{port}"
+        done()
+      else
+        utils.createNoFloServer port, (err, s) ->
+          console.log port, server
+          server = s
+          done()
+    after (done) ->
+      server.close() if server
+      done()
+
+    it 'should be instantiable', (done) ->
+      def =
+        label: "NoFlo node.js websocket"
+        description: ""
+        type: "noflo"
+        protocol: "websocket"
+        address: "ws://localhost:"+port
+        secret: "my-super-secret2s"
+        id: "2ef763ff-1f28-49b8-b58f-5c6a5c23af23"
+        user: "3f3a8187-0931-4611-8963-239c0dff1934"
+        seenHoursAgo: 11
+      c = (RemoteSubGraph.getComponentForRuntime def)(meta)
+      chai.expect(c).to.be.an.instanceof noflo.Component
+      c.once 'ready', () ->
+        done()
+    it 'should be possible to upload new graph', (done) ->
+        @timeout 10000 # component loading takes forever
+        checkRunning = (status) ->
+          if status.running
+            c.runtime.removeListener 'execution', checkRunning
+            return done()
+        c.runtime.on 'execution', checkRunning
+        noflo.graph.loadFBP echoNoflo, (graph) ->
+          graph.setProperties { id: 'echoNoflo', main: true }
+          c.runtime.setMain graph
+          connection.sendGraph graph, c.runtime, () ->
+            c.runtime.start()
+          , true
     it 'should have exported inport and outport', (done) ->
       checkPorts = () ->
         chai.expect(c.inPorts.ports).to.be.an 'object'
