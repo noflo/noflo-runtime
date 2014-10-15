@@ -1,7 +1,7 @@
 
 # Code for connecting between a noflo.Graph instance and a noflo-runtime
 
-exports.sendGraph = (graph, runtime, callback) ->
+exports.sendGraph = (graph, runtime, callback, main) ->
   if graph.properties.environment?.type
     unless graph.properties.environment.type in ['all', runtime.definition.type]
       return callback new Error "Graph type #{graph.properties.environment.type} doesn't match runtime type #{runtime.definition.type}"
@@ -13,6 +13,7 @@ exports.sendGraph = (graph, runtime, callback) ->
   runtime.sendGraph 'clear',
     id: graphId
     name: graph.name
+    main: main
     library: graph.properties.project
     icon: graph.properties.icon or ''
     description: graph.properties.description or ''
