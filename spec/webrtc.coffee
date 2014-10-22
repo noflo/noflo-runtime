@@ -35,7 +35,7 @@ class FakeRuntime extends EventEmitter
       dc.onmessage = (data) =>
         msg = JSON.parse data.data
         @emit 'message', msg
-        if msg.protocol == 'runtime' && msg.message == 'getruntime'
+        if msg.protocol == 'runtime' && msg.command == 'getruntime'
           # reply so we are considered to be connected
           @send 'runtime', 'runtime',
             type: 'noflo-browser'
@@ -46,7 +46,7 @@ class FakeRuntime extends EventEmitter
     return if not context.channel
     msg =
       protocol: protocol
-      message: topic
+      command: topic
       payload: payload
     m = JSON.stringify msg
     @channel.send m
