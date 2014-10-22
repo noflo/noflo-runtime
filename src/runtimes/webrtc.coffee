@@ -52,6 +52,8 @@ class WebRTCRuntime extends Base
         @handleMessage data.data
       console.log 'onmessage registered'
       @connecting = false
+      @send 'runtime', 'getruntime',
+        secret: @definition.secret
       @emit 'status',
         online: true
         label: 'connected'
