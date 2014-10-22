@@ -97,6 +97,7 @@ class WebRTCRuntime extends Base
 
   handleMessage: (message) =>
     msg = JSON.parse message.data
+    console.log msg.protocol, msg.command
     switch msg.protocol
       when 'graph' then @recvGraph msg.command, msg.payload
       when 'network' then @recvNetwork msg.command, msg.payload
