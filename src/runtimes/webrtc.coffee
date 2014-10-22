@@ -1,5 +1,7 @@
 Base = require './base'
 
+console.log 'importe WEBRTC'
+
 class WebRTCRuntime extends Base
   constructor: (definition) ->
     @peer = null
@@ -22,26 +24,43 @@ class WebRTCRuntime extends Base
     @on 'disconnected', ->
       console.innerHTML = ''
 
-    console
+  isConnected: ->
+    return @connection != null
 
   connect: ->
+    console.log 'connect() top'
     return if @connection or @connecting
 
-    @peer = new Peer {key: '6qn1eox3jbawcdi'}
-    @connection = @peer.connect @getAddress()
-    @connection.on 'error', @handleError
-    @connection.on 'open', => 
-      @connection.on 'data', (data) =>
-        @handleMessage data
+    id = @getAddress().replace('urn:uuid:', '')
+    options =
+      room: id
+      debug: true
+      channels:
+        chat: true
+      signaller: '//switchboard.rtc.io'
+      capture: false
+      constraints: false
+      expectedLocalStreams: 0
 
+    console.log 'creating peer'
+    @peer = RTC options
+    @peer.on 'channel:opened:chat', (id, dc) =>
+      console.log 'opened'
+      @connection = dc
+      @connection.onmessage = (data) =>
+        console.log 'message', data.data
+        @handleMessage data.data
+      console.log 'onmessage registered'
       @connecting = false
       @emit 'status',
         online: true
         label: 'connected'
       @emit 'connected'
+      console.log 'connected emitted'
       @flush()
 
-    @connection.on 'close', =>
+    @peer.on 'channel:closed:chat', (id, dc) =>
+      dc.onmessage = null
       @connection = null
       @emit 'status',
         online: false
@@ -51,6 +70,7 @@ class WebRTCRuntime extends Base
     @connecting = true
 
   disconnect: ->
+    console.log 'disconnect WEBRTC'
     return unless @connection
     @connecting = false
     @connection.close()
