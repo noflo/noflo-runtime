@@ -79,6 +79,10 @@ class BaseRuntime extends platform.EventEmitter
         @emit 'execution',
           running: false
           label: 'stopped'
+      when 'status'
+        @emit 'execution',
+          running: payload.running
+          label: if payload.running then 'running' else 'stopped'
       when 'icon'
         @emit 'icon', payload
       else
