@@ -45,9 +45,6 @@ class IframeRuntime extends Base
     # Set an ID for targeting purposes
     @iframe.id = 'preview-iframe'
 
-    # Update iframe contents as needed
-    @on 'connected', @updateIframe
-
     # Start listening for messages from the iframe
     window.addEventListener 'message', @onMessage, false
 
@@ -82,6 +79,8 @@ class IframeRuntime extends Base
       online: true
       label: 'connected'
     @emit 'connected'
+
+    do @updateIframe
 
     @flush()
 
