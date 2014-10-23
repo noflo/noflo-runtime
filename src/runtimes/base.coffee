@@ -73,16 +73,16 @@ class BaseRuntime extends platform.EventEmitter
     switch command
       when 'started'
         @emit 'execution',
-          running: true
-          label: 'running'
+          running: if payload? and payload.running? then payload.running else true
+          started: if payload? and payload.started then payload.started else true
       when 'stopped'
         @emit 'execution',
-          running: false
-          label: 'stopped'
+          running: if payload? and payload.running? then payload.running else false
+          started: if payload? and payload.started then payload.started else false
       when 'status'
         @emit 'execution',
           running: payload.running
-          label: if payload.running then 'running' else 'stopped'
+          started: payload.started
       when 'icon'
         @emit 'icon', payload
       else
