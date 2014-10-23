@@ -16,15 +16,23 @@ else
 describeIfBrowser = if noflo.isBrowser() then describe else describe.skip
 
 class FakeRuntime extends EventEmitter
-  constructor: (id) ->
-    @id = id
+  constructor: (address) ->
+    if (address.indexOf('#') != -1)
+      @signaller = address.split('#')[0]
+      @id = address.split('#')[1]
+    else
+      @signaller = 'https://api.flowhub.io'
+      @id = address
+
+    console.log @signaller, @id
+
     @channel = null
     options =
-      room: id
+      room: @id
       debug: true
       channels:
         chat: true
-      signaller: '//switchboard.rtc.io'
+      signaller: @signaller
       capture: false
       constraints: false
       expectedLocalStreams: 0
@@ -62,14 +70,14 @@ describeIfBrowser 'WebRTC', ->
       description: "Open any client-side NoFlo app in Flowhub"
       type: "noflo-browser"
       protocol: "webrtc"
-      address: "urn:uuid:"+id
+      address: "http://switchboard.rtc.io#"+id
       secret: "my-super-secret"
       id: id
       user: "3f3a8187-0931-4611-8963-239c0dff1931"
       seenHoursAgo: 11
 
     before (done) ->
-      target = new FakeRuntime id
+      target = new FakeRuntime def.address
       done()
     after (done) ->
       target = null

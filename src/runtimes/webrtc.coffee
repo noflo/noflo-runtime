@@ -1,7 +1,5 @@
 Base = require './base'
 
-console.log 'importe WEBRTC'
-
 class WebRTCRuntime extends Base
   constructor: (definition) ->
     @peer = null
@@ -28,16 +26,22 @@ class WebRTCRuntime extends Base
     return @connection != null
 
   connect: ->
-    console.log 'connect() top'
     return if @connection or @connecting
 
-    id = @getAddress().replace('urn:uuid:', '')
+    address = @getAddress()
+    if (address.indexOf('#') != -1)
+      signaller = address.split('#')[0]
+      id = address.split('#')[1]
+    else
+      signaller = 'https://api.flowhub.io'
+      id = address
+
     options =
       room: id
       debug: true
       channels:
         chat: true
-      signaller: '//switchboard.rtc.io'
+      signaller: signaller
       capture: false
       constraints: false
       expectedLocalStreams: 0
