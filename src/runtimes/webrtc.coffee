@@ -7,6 +7,7 @@ class WebRTCRuntime extends Base
     @connection = null
     @protocol = 'webrtc'
     @buffer = []
+    @debug = false
     super definition
 
   getElement: ->
@@ -49,15 +50,12 @@ class WebRTCRuntime extends Base
       constraints: false
       expectedLocalStreams: 0
 
-    console.log 'creating peer'
     @peer = RTC options
     @peer.on 'channel:opened:chat', (id, dc) =>
-      console.log 'opened'
       @connection = dc
       @connection.onmessage = (data) =>
-        console.log 'message', data.data
+        console.log 'message', data.data if @debug
         @handleMessage data.data
-      console.log 'onmessage registered'
       @connecting = false
       @send 'runtime', 'getruntime',
         secret: @definition.secret
@@ -65,7 +63,6 @@ class WebRTCRuntime extends Base
         online: true
         label: 'connected'
       @emit 'connected'
-      console.log 'connected emitted'
       @flush()
 
     @peer.on 'channel:closed:chat', (id, dc) =>
@@ -79,24 +76,22 @@ class WebRTCRuntime extends Base
     @connecting = true
 
   disconnect: ->
-    console.log 'disconnect WEBRTC'
     return unless @connection
     @connecting = false
     @connection.close()
 
   send: (protocol, command, payload) ->
-    if @connecting
-      @buffer.push
-        protocol: protocol
-        command: command
-        payload: payload
-      return
-
-    return unless @connection
-    @connection.send JSON.stringify
+    m =
       protocol: protocol
       command: command
       payload: payload
+    if @connecting
+      @buffer.push m
+      return
+
+    return unless @connection
+    console.log 'send', m if @debug
+    @connection.send JSON.stringify m
 
   handleError: (error) =>
     @connection = null
