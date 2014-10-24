@@ -10,6 +10,9 @@ class WebRTCRuntime extends Base
     super definition
 
   getElement: ->
+    # FIXME: not implemented
+    return null
+
     # DOM visualization for remote runtime output
     console = document.createElement 'pre'
 
