@@ -1,27 +1,46 @@
 noflo = require 'noflo'
-path = require 'path'
-fs = require 'fs'
 RemoteSubGraph = require '../src/RemoteSubGraph'
+
+if noflo.isBrowser()
+else
+  path = require 'path'
+  fs = require 'fs'
 
 registerComponent = (loader, prefix, runtime) ->
   bound = RemoteSubGraph.getComponentForRuntime runtime
   name = runtime.id
   loader.registerComponent prefix, name, bound
 
-module.exports = (loader, done) ->
+getRuntimesNode = (baseDir, callback) ->
   # Read runtime definitions from package.json
-  packageFile = path.resolve loader.baseDir, 'package.json'
+  packageFile = path.resolve baseDir, 'package.json'
 
   fs.readFile packageFile, 'utf-8', (err, def) ->
-    return done err if err
+    return callback err if err
     try
       packageDef = JSON.parse def
     catch e
-      return done e
-    runtimes = packageDef.noflo?.runtimes
-    return done() unless runtimes
+      return callback e
+    runtimes = []
+    runtimes = packageDef.noflo.runtimes if packageDef.noflo?.runtimes?
+    return callback null, runtimes
 
+getRuntimesBrowser = (baseDir, callback) ->
+  # Read runtime definitions from component.json
+  p = baseDir+'/component.json'
+  try
+    packageDef = require(p)
+  catch e
+    return callback e, null
+  runtimes = []
+  runtimes = packageDef.noflo.runtimes if packageDef.noflo?.runtimes?
+  return callback null, runtimes
+
+module.exports = (loader, done) ->
+  getRuntimes = if noflo.isBrowser() then getRuntimesBrowser else getRuntimesNode
+  getRuntimes loader.baseDir, (err, runtimes) ->
+    return done err if err
     prefix = loader.getModulePrefix 'runtime'
     for runtime in runtimes
       registerComponent loader, prefix, runtime
-    done null
+    return done null

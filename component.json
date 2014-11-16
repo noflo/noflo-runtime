@@ -23,6 +23,7 @@
     "components/ListNetworks.coffee",
     "components/SendGraphChanges.coffee",
     "src/RemoteSubGraph.coffee",
+    "src/ComponentLoader.coffee",
     "src/platform.coffee",
     "src/connection.coffee",
     "src/runtimes/base.coffee",
@@ -38,6 +39,7 @@
     "components/ListComponents.coffee"
   ],
   "json": [
+    "spec/data/component.json",
     "component.json"
   ],
   "noflo": {

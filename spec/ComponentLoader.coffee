@@ -13,8 +13,8 @@ describe 'ComponentLoader', ->
   it 'should export a function', ->
     chai.expect(ComponentLoader).to.be.a 'function'
 
-  describe 'runtimes specified in package.json', ->
-    baseDir = require('path').resolve __dirname, './data/'
+  describe 'runtimes specified in project file', ->
+    baseDir = if noflo.isBrowser() then '/noflo-runtime/spec/data' else require('path').resolve __dirname, './data/'
     names = null
     loader = new noflo.ComponentLoader baseDir
     compName = 'runtime/2ef763ff-1f28-49b8-b58f-5c6a5c54af2d'
