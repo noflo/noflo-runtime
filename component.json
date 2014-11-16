@@ -43,6 +43,7 @@
     "component.json"
   ],
   "noflo": {
+    "loader": "src/ComponentLoader.coffee",
     "components": {
       "ConnectRuntime": "components/ConnectRuntime.coffee",
       "DebugNetwork": "components/DebugNetwork.coffee",
