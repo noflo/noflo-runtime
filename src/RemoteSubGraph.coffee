@@ -84,9 +84,8 @@ class RemoteSubGraph extends noflo.Component
   shutdown: ->
     @runtime.disconnect()
 
-
+exports.RemoteSubGraph = RemoteSubGraph
 exports.getComponent = (metadata) -> new RemoteSubGraph metadata
-
 exports.getComponentForRuntime = (runtime) ->
   return (metadata) ->
     instance = exports.getComponent metadata

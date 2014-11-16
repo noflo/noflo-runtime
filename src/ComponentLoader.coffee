@@ -9,17 +9,19 @@ registerComponent = (loader, prefix, runtime) ->
   loader.registerComponent prefix, name, bound
 
 module.exports = (loader, done) ->
-  # Read MicroFlo graph definitions from fbp.json
-  packageFile = path.resolve loader.baseDir, 'fbp.json'
+  # Read runtime definitions from package.json
+  packageFile = path.resolve loader.baseDir, 'package.json'
+
   fs.readFile packageFile, 'utf-8', (err, def) ->
-    return done() if err
+    return done err if err
     try
       packageDef = JSON.parse def
     catch e
-      return
-    return done() unless packageDef.runtimes
+      return done e
+    runtimes = packageDef.noflo?.runtimes
+    return done() unless runtimes
 
     prefix = loader.getModulePrefix 'runtime'
-    for runtime in packageDef.runtimes
+    for runtime in runtimes
       registerComponent loader, prefix, runtime
-    done()
+    done null

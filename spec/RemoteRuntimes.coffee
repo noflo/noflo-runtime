@@ -10,7 +10,6 @@ else
   connection = require 'noflo-runtime/src/connection'
 
 
-# TODO: test the custom ComponentLoader
 # TODO: test whole connect/begin/endBracket/disconnect
 
 describe 'Remote runtimes', ->

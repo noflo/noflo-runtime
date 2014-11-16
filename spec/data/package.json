@@ -1,0 +1,20 @@
+{
+  "name": "noflo-runtime-test",
+  "description": "",
+  "version": "0.0.0",
+  "noflo": {
+    "runtimes": [
+      {
+      "id": "2ef763ff-1f28-49b8-b58f-5c6a5c54af2d",
+      "label": "MicroFlo Simulator",
+      "description": "The first remote component in the world",
+      "type": "noflo",
+      "protocol": "websocket",
+      "address": "ws://localhost:7777",
+      "secret": "my-super-secret",
+      "user": "3f3a8187-0931-4611-8963-239c0dff1931",
+      "seenHoursAgo": 11
+      }
+    ]
+  }
+}
