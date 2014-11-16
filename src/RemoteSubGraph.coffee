@@ -6,7 +6,7 @@ class RemoteSubGraph extends noflo.Component
     metadata = {} unless metadata
 
     @runtime = null
-    @ready = true
+    @ready = false
 
     @inPorts = new noflo.InPorts
     @outPorts = new noflo.OutPorts
