@@ -7,7 +7,7 @@ else
   fs = require 'fs'
 
 registerComponent = (loader, prefix, runtime) ->
-  bound = RemoteSubGraph.getComponentForRuntime runtime
+  bound = RemoteSubGraph.getComponentForRuntime runtime, loader.baseDir
   name = runtime.id
   loader.registerComponent prefix, name, bound
 

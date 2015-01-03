@@ -1,4 +1,5 @@
 noflo = require 'noflo'
+connection = require './connection'
 
 class RemoteSubGraph extends noflo.Component
 
@@ -27,12 +28,18 @@ class RemoteSubGraph extends noflo.Component
     @runtime = new Runtime @definition
 
     @description = definition.description || ''
+    @setIcon definition.icon if definition.icon
 
     @runtime.on 'capabilities', (capabilities) =>
       if 'protocol:runtime' not in capabilities
         throw new Error "runtime #{@definition.id} does not declare protocol:runtime"
+      if definition.graph
+        noflo.graph.loadFile definition.graph, (graph) =>
+          connection.sendGraph graph, @runtime, =>
+            @runtime.setMain graph
 
     # TODO: make runtime base handle ports discovery similar to capabilities?
+    portsRecv = 0
     @runtime.on 'runtime', (msg) =>
       if msg.command == 'ports'
         @setupPorts msg.payload
@@ -52,7 +59,9 @@ class RemoteSubGraph extends noflo.Component
     # Expose remote graph's exported ports as node ports
     @prepareInport port for port in ports.inPorts
     @prepareOutport port for port in ports.outPorts
-    @setReady true
+    setTimeout =>
+      @setReady true
+    , 100
 
   prepareInport: (definition) ->
     name = definition.id
@@ -86,11 +95,9 @@ class RemoteSubGraph extends noflo.Component
 
 exports.RemoteSubGraph = RemoteSubGraph
 exports.getComponent = (metadata) -> new RemoteSubGraph metadata
-exports.getComponentForRuntime = (runtime) ->
+exports.getComponentForRuntime = (runtime, baseDir) ->
   return (metadata) ->
     instance = exports.getComponent metadata
+    instance.baseDir = baseDir
     instance.setDefinition runtime
     return instance
-
-
-
