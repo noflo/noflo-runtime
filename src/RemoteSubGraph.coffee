@@ -19,6 +19,10 @@ class RemoteSubGraph extends noflo.Component
     @ready = ready
     @emit 'ready' if ready
 
+  start: ->
+    @runtime.start()
+    super()
+
   setDefinition: (definition) ->
     @definition = definition
     try
