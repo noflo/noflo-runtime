@@ -23,6 +23,10 @@ class RemoteSubGraph extends noflo.Component
     @runtime.start()
     super()
 
+  shutdown: ->
+    @runtime.stop()
+    super()
+
   setDefinition: (definition) ->
     @definition = definition
     try
