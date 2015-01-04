@@ -64,6 +64,8 @@ class RemoteSubGraph extends noflo.Component
 
   setupPorts: (ports) ->
     @setReady false
+    if ports.inPorts.length is 0 and ports.outPorts.length is 0
+      return
     # Expose remote graph's exported ports as node ports
     @prepareInport port for port in ports.inPorts
     @prepareOutport port for port in ports.outPorts
