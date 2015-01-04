@@ -74,7 +74,7 @@ class MicroFloRuntime extends Base
 
     if info.type == 'serial'
       getRuntime = (callback) =>
-        microflo.serial.openTransport info.device, info.baudrate, (err, transport) ->
+        microflo.serial.openTransport info.device, parseInt info.baudrate, (err, transport) ->
           return callback err if err
           dev = new microflo.runtime.Runtime transport
           return callback null, dev
