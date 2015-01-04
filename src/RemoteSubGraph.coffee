@@ -25,6 +25,7 @@ class RemoteSubGraph extends noflo.Component
 
   shutdown: ->
     @runtime.stop()
+    @runtime.disconnect()
     super()
 
   setDefinition: (definition) ->
@@ -99,9 +100,6 @@ class RemoteSubGraph extends noflo.Component
     name = packet.port
     port = @outPorts[name]
     port.send packet.payload
-
-  shutdown: ->
-    @runtime.disconnect()
 
 exports.RemoteSubGraph = RemoteSubGraph
 exports.getComponent = (metadata) -> new RemoteSubGraph metadata
