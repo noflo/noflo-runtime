@@ -24,6 +24,18 @@ describe 'MicroFlo', ->
   after (done) ->
     done()
 
+  describe 'Address parsing', ->
+    cases =
+      'simulator://': { type: 'simulator', baudrate: '9600', device: null,  },
+      'serial:///dev/foo': { type: 'serial', baudrate: '9600', device: '/dev/foo' },
+      'serial:///dev/foo?baudrate=115200': { type: 'serial', baudrate: '115200', device: '/dev/foo' },
+    Object.keys(cases).forEach (name) ->
+      expect = cases[name]
+      out = Runtime.parseAddress name
+      describe name, ->
+        it 'should equal expected', () ->
+          chai.expect(out).to.eql expect
+
   describe 'Runtime', ->
     runtime = null
     def =
