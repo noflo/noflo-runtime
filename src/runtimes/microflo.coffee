@@ -1,6 +1,42 @@
 Base = require './base'
 microflo = require 'microflo'
 
+parseQueryString = (queryString) ->
+  queries = queryString.split "&"
+  params = {}
+  queries.forEach (query, i) ->
+    kv = query.split '='
+    params[kv[0]] = kv[1]
+  return params
+
+parseAddress = (address) ->
+  info =
+    type: null
+    device: null
+    baudrate: "9600"
+
+  if address.indexOf('serial://') == 0
+    info.type = 'serial'
+  if address.indexOf('simulator://') == 0
+    info.type = 'simulator'
+
+  if info.type
+    start = address.indexOf('://')+'://'.length
+    end = address.indexOf('?')
+    end = address.length if end < 0
+    d = address.substring start, end
+    info.device = d if d
+
+  queryStart = address.indexOf('?')
+  if queryStart != -1
+    query = address.substring queryStart+1
+    params = parseQueryString query
+    for k, v of params
+      info[k] = v
+
+  return info
+
+
 # TODO: make this runtime be for every device that supports the same FBCS protocol as MicroFlo
 class MicroFloRuntime extends Base
   constructor: (definition) ->
@@ -33,19 +69,16 @@ class MicroFloRuntime extends Base
     super graph
 
   openComm: () ->
-    address = @getAddress()
-
     getRuntime = null
-    if address.indexOf('serial://') == 0
-      serialPort = @getAddress().replace 'serial://', ''
-      # TODO: remove hardcoding of baudrate
-      baudRate = 9600
+    info = parseAddress @getAddress()
+
+    if info.type == 'serial'
       getRuntime = (callback) =>
-        microflo.serial.openTransport serialPort, baudRate, (err, transport) ->
+        microflo.serial.openTransport info.device, info.baudrate, (err, transport) ->
           return callback err if err
           dev = new microflo.runtime.Runtime transport
           return callback null, dev
-    else if address.indexOf('simulator://') == 0
+    else if info.type == 'simulator'
       getRuntime = (callback) =>
         sim = new microflo.simulator.RuntimeSimulator
         sim.start()
@@ -140,3 +173,4 @@ class MicroFloRuntime extends Base
     @buffer = []
 
 module.exports = MicroFloRuntime
+MicroFloRuntime.parseAddress = parseAddress
