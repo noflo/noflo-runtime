@@ -8,6 +8,7 @@ class RemoteSubGraph extends noflo.Component
 
     @runtime = null
     @ready = false
+    @graph = null
 
     @inPorts = new noflo.InPorts
     @outPorts = new noflo.OutPorts
@@ -44,8 +45,10 @@ class RemoteSubGraph extends noflo.Component
         throw new Error "runtime #{@definition.id} does not declare protocol:runtime"
       if definition.graph
         noflo.graph.loadFile definition.graph, (graph) =>
+          @graph = graph
+          @runtime.setMain graph
           connection.sendGraph graph, @runtime, =>
-            @runtime.setMain graph
+            # ignore
 
     # TODO: make runtime base handle ports discovery similar to capabilities?
     portsRecv = 0
@@ -64,15 +67,26 @@ class RemoteSubGraph extends noflo.Component
     @runtime.connect()
 
   setupPorts: (ports) ->
-    @setReady false
-    if ports.inPorts.length is 0 and ports.outPorts.length is 0
+    if @definition.graph and not @graph
+      # We are going to load and send a new graph to runtime, disregard whatever the runtime
+      # tells initially
       return
+
+    if @graph
+      # We should only emit ready once the remote runtime sent us at least all the ports that
+      # the graph exports
+      for exported, metadata of @graph.inports
+        matching = ports.inPorts.filter (port) -> port.id is exported
+        return unless matching.length
+      for exported, metadata of @graph.outports
+        matching = ports.outPorts.filter (port) -> port.id is exported
+        return unless matching.length
+    
+    @setReady false
     # Expose remote graph's exported ports as node ports
     @prepareInport port for port in ports.inPorts
     @prepareOutport port for port in ports.outPorts
-    setTimeout =>
-      @setReady true
-    , 100
+    @setReady true
 
   prepareInport: (definition) ->
     name = definition.id
