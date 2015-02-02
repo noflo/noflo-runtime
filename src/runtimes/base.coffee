@@ -2,7 +2,7 @@ platform = require '../platform'
 
 class BaseRuntime extends platform.EventEmitter
   constructor: (@definition) ->
-    @definition.capabilities = [] unless definition.capabilities
+    @definition.capabilities = [] unless @definition.capabilities
     @graph = null
 
   setMain: (@graph) ->
