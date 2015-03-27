@@ -1,4 +1,5 @@
 noflo = require 'noflo'
+fbpClient = require 'fbp-protocol-client'
 
 class ConnectRuntime extends noflo.Component
   constructor: ->
@@ -56,7 +57,7 @@ class ConnectRuntime extends noflo.Component
     return unless @validate definition
 
     try
-      Runtime = require "../src/runtimes/#{definition.protocol}"
+      Runtime = fbpClient.getTransport definition.protocol
     catch e
       @outPorts.error.send new Error "Protocol #{definition.protocol} is not supported"
       @outPorts.error.disconnect()

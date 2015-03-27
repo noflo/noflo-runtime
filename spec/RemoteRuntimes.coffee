@@ -78,7 +78,7 @@ describe 'Remote runtimes', ->
       input.send {test: true}
 
 
-  describe 'MicroFlo simulator direct in NoFlo', ->
+  describe.skip 'MicroFlo simulator direct in NoFlo', ->
     c = null
     def =
       label: "MircroFlo sim"
@@ -196,6 +196,7 @@ describe 'Remote runtimes', ->
         noflo.graph.loadFBP echoNoflo, (graph) ->
           graph.setProperties { id: 'echoNoflo', main: true }
           c.runtime.setMain graph
+          c.graph = graph
           connection.sendGraph graph, c.runtime, () ->
             c.runtime.start()
           , true
@@ -221,4 +222,3 @@ describe 'Remote runtimes', ->
         chai.expect(data).to.deep.equal 113
         done()
       input.send 113
-

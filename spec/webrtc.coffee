@@ -1,15 +1,14 @@
 noflo = require 'noflo'
+fbpClient = require 'fbp-protocol-client'
+Base = fbpClient.getTransport 'base'
 
 unless noflo.isBrowser()
   chai = require 'chai' unless chai
-#  Runtime = require '../src/runtimes/webrtc'
-  Base = require '../src/runtimes/base'
   utils = require './utils'
   connection = require '../src/connection'
   EventEmitter = require('events').EventEmitter
 else
-  Runtime = require 'noflo-runtime/src/runtimes/webrtc'
-  Base = require 'noflo-runtime/src/runtimes/base'
+  Runtime = fbpClient.getTransport 'webrtc'
   connection = require 'noflo-runtime/src/connection'
   EventEmitter = require('emitter')
 

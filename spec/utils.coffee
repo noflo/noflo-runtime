@@ -73,8 +73,8 @@ class PseudoRuntime extends EventEmitter
     if msg.protocol == 'runtime' && msg.command == 'getruntime'
       rt =
         type: 'remote-subgraph-test'
-        version: '0.4'
-        capabilities: ['protocol:runtime']
+        version: '0.5'
+        capabilities: ['protocol:runtime', 'protocol:graph']
       msg = { protocol: 'runtime', command: 'runtime', payload: rt }
       connection.sendUTF JSON.stringify msg
       @sendPorts()
@@ -133,14 +133,17 @@ createServer = (port, callback) ->
     return callback err, server
 
 createNoFloServer = (port, callback) ->
-  runtime = require('noflo-runtime-websocket');
+  runtime = require('noflo-runtime-websocket')
   baseDir = path.join __dirname, '../'
 
   server = http.createServer () ->
   options =
     baseDir: baseDir
-    captureOutput: false,
+    captureOutput: false
     catchExceptions: false
+    permissions:
+      'my-super-secret2s': ['protocol:runtime', 'protocol:graph', 'protocol:network']
+      'my-super-secret': ['protocol:runtime', 'protocol:graph']
   rt = runtime server, options
   server.listen port, () ->
     return callback null, server

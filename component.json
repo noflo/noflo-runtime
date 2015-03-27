@@ -8,7 +8,8 @@
   "dependencies": {
     "noflo/noflo": "*",
     "jonnor/microflo": "*",
-    "component/emitter": "*"
+    "component/emitter": "*",
+    "flowbased/fbp-protocol-client": "*"
   },
   "remotes": [
     "https://raw.githubusercontent.com"

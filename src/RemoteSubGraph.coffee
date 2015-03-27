@@ -1,5 +1,6 @@
 noflo = require 'noflo'
 connection = require './connection'
+fbpClient = require 'fbp-protocol-client'
 
 class RemoteSubGraph extends noflo.Component
 
@@ -9,6 +10,7 @@ class RemoteSubGraph extends noflo.Component
     @runtime = null
     @ready = false
     @graph = null
+    @graphName = null
 
     @inPorts = new noflo.InPorts
     @outPorts = new noflo.OutPorts
@@ -32,7 +34,7 @@ class RemoteSubGraph extends noflo.Component
   setDefinition: (definition) ->
     @definition = definition
     try
-      Runtime = require "./runtimes/#{definition.protocol}"
+      Runtime = fbpClient.getTransport @definition.protocol
     catch e
       throw new Error "'#{@definition.protocol}' protocol not supported: " + e.message
     @runtime = new Runtime @definition
@@ -43,16 +45,23 @@ class RemoteSubGraph extends noflo.Component
     @runtime.on 'capabilities', (capabilities) =>
       if 'protocol:runtime' not in capabilities
         throw new Error "runtime #{@definition.id} does not declare protocol:runtime"
+
       if definition.graph
+        if 'protocol:graph' not in capabilities
+          throw new Error "runtime #{@definition.id} does not declare protocol:graph"
+
         noflo.graph.loadFile definition.graph, (graph) =>
           @graph = graph
+          @graphName = graph.name or graph.properties.id
           @runtime.setMain graph
           connection.sendGraph graph, @runtime, =>
-            # ignore
+            return
+          , true
 
-    # TODO: make runtime base handle ports discovery similar to capabilities?
     portsRecv = 0
     @runtime.on 'runtime', (msg) =>
+      if msg.command is 'runtime' and msg.payload.graph
+        @graphName = msg.payload.graph
       if msg.command == 'ports'
         @setupPorts msg.payload
       else if msg.command == 'packet'
@@ -93,27 +102,27 @@ class RemoteSubGraph extends noflo.Component
     # Send data across to remote graph
     # TODO: set metadata like datatype
     @inPorts.add name, {}, (event, packet) =>
-      # TODO: Support for the other event types
-      if event isnt 'data'
-        console.log 'SENC: ignoring event type', event
-        return
-
-      @runtime.sendRuntime 'packet', { port: name, event: 'data', payload: packet }
+      @runtime.sendRuntime 'packet',
+        port: name
+        event: event
+        payload: packet
+        graph: @graphName
 
   prepareOutport: (definition) ->
     name = definition.id
+    # TODO: set metadata like datatype
     port = @outPorts.add name, {}
 
   onPacketReceived: (packet) ->
-    # TODO: support the other event types
-    if packet.event != 'data'
-      console.log 'RECV: ignoring event type', packet.event
-      return
-
     # TODO: set metadata like datatype
     name = packet.port
     port = @outPorts[name]
-    port.send packet.payload
+    switch packet.event
+      when 'connect' then port.connect()
+      when 'begingroup' then port.beginGroup packet.payload
+      when 'data' then port.send packet.payload
+      when 'endgroup' then port.endGroup packet.payload
+      when 'disconnect' then port.disconnect()
 
 exports.RemoteSubGraph = RemoteSubGraph
 exports.getComponent = (metadata) -> new RemoteSubGraph metadata
