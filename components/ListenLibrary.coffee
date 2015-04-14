@@ -70,6 +70,6 @@ class ListenLibrary extends noflo.Component
       @outPorts.error.send new Error 'No Runtime available'
       @outPorts.error.disconnect()
       return
-    @runtime.sendComponent 'list', ''
+    @runtime.sendComponent 'list', {}
 
 exports.getComponent = -> new ListenLibrary
