@@ -7,7 +7,6 @@
   "keywords": [],
   "dependencies": {
     "noflo/noflo": "*",
-    "jonnor/microflo": "*",
     "component/emitter": "*",
     "flowbased/fbp-protocol-client": "*"
   },
