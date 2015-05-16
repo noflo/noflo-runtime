@@ -58,7 +58,6 @@ class RemoteSubGraph extends noflo.Component
             return
           , true
 
-    portsRecv = 0
     @runtime.on 'runtime', (msg) =>
       if msg.command is 'runtime' and msg.payload.graph
         @graphName = msg.payload.graph
