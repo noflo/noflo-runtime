@@ -18,6 +18,7 @@ subscribe = (runtime, port) ->
       description: message.payload.description
       icon: message.payload.icon
       subgraph: message.payload.subgraph or false
+      runtime: message.payload.runtime or runtime.id
       inports: []
       outports: []
     for portDef in message.payload.inPorts
