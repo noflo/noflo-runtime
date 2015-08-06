@@ -10,12 +10,7 @@
     "type": "git",
     "url": "git://github.com/noflo/noflo-runtime.git"
   },
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "undefined/blob/master/LICENSE-MIT"
-    }
-  ],
+  "license": "MIT",
   "dependencies": {
     "coffee-script": "^1.8.0",
     "fbp-protocol-client": "^0.1.1",
