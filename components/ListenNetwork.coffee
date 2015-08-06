@@ -31,12 +31,12 @@ exports.getComponent = () ->
     c.runtime.on 'network', c.onNetworkPacket if c.runtime
 
   c.onNetworkPacket = ({command, payload}) ->
-    return unless payload.graph
-    return unless c.graph
-    return unless payload.graph is c.graph.name
     if command is 'error'
       c.outPorts.error.send payload
       return
+    return unless payload.graph
+    return unless c.graph
+    return unless payload.graph is c.graph.name
     if command is 'icon'
       c.outPorts.icon.send payload
       return
