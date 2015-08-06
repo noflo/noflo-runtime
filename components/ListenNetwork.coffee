@@ -19,6 +19,10 @@ exports.getComponent = () ->
 
   c.outPorts.add 'packet',
     datatype: 'object'
+  c.outPorts.add 'icon',
+    datatype: 'object'
+  c.outPorts.add 'error',
+    datatype: 'object'
 
   c.updateListeners = (runtime, graph) ->
     c.runtime.removeListener 'network', c.onNetworkPacket if c.runtime
@@ -27,7 +31,15 @@ exports.getComponent = () ->
     c.runtime.on 'network', c.onNetworkPacket if c.runtime
 
   c.onNetworkPacket = ({command, payload}) ->
-    return if not payload.graph or not c.graph or payload.graph isnt c.graph.name
+    return unless payload.graph
+    return unless c.graph
+    return unless payload.graph is c.graph.name
+    if command is 'error'
+      c.outPorts.error.send payload
+      return
+    if command is 'icon'
+      c.outPorts.icon.send payload
+      return
     c.outPorts.packet.send
       edge: payload.id
       type: command
