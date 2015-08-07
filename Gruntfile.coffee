@@ -62,7 +62,7 @@ module.exports = ->
         options:
           max_line_length:
             value: 80
-            level: 'warn'
+            level: 'ignore'
 
   # Grunt plugins used for building
   @loadNpmTasks 'grunt-noflo-manifest'
