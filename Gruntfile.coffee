@@ -51,14 +51,14 @@ module.exports = ->
     connect:
       server:
         options:
-          port: 8000
+          port: 3000
           #keepalive: true
     mocha_phantomjs:
       options:
         reporter: 'spec'
       all:
         options:
-          urls: ['http://localhost:8000/spec/runner.html']
+          urls: ['http://127.0.0.1:3000/spec/runner.html']
 
     # Coding standards
     coffeelint:
@@ -91,6 +91,18 @@ module.exports = ->
       @task.run 'noflo_browser'
       @task.run 'uglify'
 
+  @registerTask 'start_servers', 'Start local WebSocket servers', ->
+    done = @async()
+    require('coffee-script/register');
+    utils = require './spec/utils/utils'
+    utils.createServer 3889, (err) =>
+      return @fail.fatal err if err
+      console.log "Echo server running at port 3889"
+      utils.createNoFloServer 3892, (err) =>
+        return @fail.fatal err if err
+        console.log "NoFlo server running at port 3892"
+        done()
+
   @registerTask 'test', 'Build NoFlo and run automated tests', (target = 'all') =>
     @task.run 'coffeelint'
     @task.run 'coffee'
@@ -100,6 +112,7 @@ module.exports = ->
     if target is 'all' or target is 'browser'
       @task.run 'noflo_browser'
       @task.run 'connect'
+      @task.run 'start_servers'
       @task.run 'mocha_phantomjs'
 
   @registerTask 'default', ['test']
