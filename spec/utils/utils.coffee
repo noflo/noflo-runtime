@@ -134,7 +134,7 @@ createServer = (port, callback) ->
 
 createNoFloServer = (port, callback) ->
   runtime = require('noflo-runtime-websocket')
-  baseDir = path.join __dirname, '../'
+  baseDir = path.join __dirname, '../../'
 
   server = http.createServer () ->
   options =

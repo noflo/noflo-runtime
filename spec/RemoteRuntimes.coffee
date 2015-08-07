@@ -3,7 +3,7 @@ noflo = require 'noflo'
 unless noflo.isBrowser()
   chai = require 'chai' unless chai
   RemoteSubGraph = require '../src/RemoteSubGraph'
-  utils = require './utils'
+  utils = require './utils/utils'
   connection = require '../src/connection'
 else
   RemoteSubGraph = require 'noflo-runtime/src/RemoteSubGraph'
