@@ -82,7 +82,11 @@ describe 'Remote runtimes', ->
       input.send {test: true}
 
 
-  describe.skip 'MicroFlo simulator direct in NoFlo', ->
+  describe 'MicroFlo simulator direct in NoFlo', ->
+    beforeEach ->
+      # WebSockets don't work properly in PhantomJS1
+      @skip() if window?.mochaPhantomJS?
+    c = null
     c = null
     def =
       label: "MircroFlo sim"
