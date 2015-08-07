@@ -51,16 +51,13 @@ class RemoteSubGraph extends noflo.Component
           throw new Error "runtime #{@definition.id} does not declare protocol:graph"
 
         noflo.graph.loadFile definition.graph, (graph) =>
-          @graph = graph
-          @graphName = graph.name or graph.properties.id
-          @runtime.setMain graph
-          connection.sendGraph graph, @runtime, ->
-            return
-          , true
+          @setGraph graph, ->
 
     @runtime.on 'runtime', (msg) =>
-      if msg.command is 'runtime' and msg.payload.graph
-        @graphName = msg.payload.graph
+      if msg.command is 'runtime'
+        if msg.payload.graph is null and @graphName is null
+          @setReady true
+        @graphName = msg.payload.graph if msg.payload.graph
       if msg.command == 'ports'
         @setupPorts msg.payload
       else if msg.command == 'packet'
@@ -72,6 +69,12 @@ class RemoteSubGraph extends noflo.Component
 
     # Attempt to connect
     @runtime.connect()
+
+  setGraph: (graph, callback) ->
+    @graph = graph
+    @graphName = graph.name or graph.properties.id
+    @runtime.setMain graph
+    connection.sendGraph graph, @runtime, callback, true
 
   setupPorts: (ports) ->
     if @definition.graph and not @graph

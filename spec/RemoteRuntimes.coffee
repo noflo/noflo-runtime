@@ -47,6 +47,7 @@ describe 'Remote runtimes', ->
     readyEmitted = false
 
     it 'should be instantiable', (done) ->
+      @timeout 5000
       c = (RemoteSubGraph.getComponentForRuntime def)(meta)
       chai.expect(c).to.be.an.instanceof noflo.Component
       c.on 'ready', () ->
@@ -164,7 +165,7 @@ describe 'Remote runtimes', ->
         done()
       else
         utils.createNoFloServer port, (err, s) ->
-          console.log port, server
+          console.log "NoFlo server running in port #{port}"
           server = s
           done()
     after (done) ->
@@ -195,11 +196,8 @@ describe 'Remote runtimes', ->
         c.runtime.on 'execution', checkRunning
         noflo.graph.loadFBP echoNoflo, (graph) ->
           graph.setProperties { id: 'echoNoflo', main: true }
-          c.runtime.setMain graph
-          c.graph = graph
-          connection.sendGraph graph, c.runtime, () ->
+          c.setGraph graph, ->
             c.runtime.start()
-          , true
     it 'should have exported inport and outport', (done) ->
       checkPorts = () ->
         chai.expect(c.inPorts.ports).to.be.an 'object'
