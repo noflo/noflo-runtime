@@ -3,4 +3,5 @@
 /components/*/
 /spec/*.js
 /spec/*.xml
+.noflo.json
 *~
