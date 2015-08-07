@@ -19,20 +19,6 @@ describe 'Remote runtimes', ->
     c = null
     server = null
     port = 3888
-
-    before (done) ->
-      if noflo.isBrowser()
-        port = 3889
-        console.log "WebSocket runtime should have been set up on #{port}"
-        done()
-      else
-        utils.createServer port, (err, s) ->
-          server = s
-          done()
-    after (done) ->
-      server.close() if server
-      done()
-
     def =
       label: "NoFlo 222"
       description: "The first remote component in the world"
@@ -43,6 +29,22 @@ describe 'Remote runtimes', ->
       id: "2ef763ff-1f28-49b8-b58f-5c6a5c23af2d"
       user: "3f3a8187-0931-4611-8963-239c0dff1931"
       seenHoursAgo: 11
+
+    before (done) ->
+      if noflo.isBrowser()
+        port = 3889
+        def.address = "ws://#{window.location.hostname}:#{port}"
+        console.log "WebSocket runtime should have been set up on #{def.address}"
+        done()
+      else
+        utils.createServer port, (err, s) ->
+          console.log "WebSocket runtime running in port #{port}"
+          server = s
+          done()
+    after (done) ->
+      server.close() if server
+      done()
+
     meta = {}
     readyEmitted = false
 
@@ -157,11 +159,22 @@ describe 'Remote runtimes', ->
     """
     meta = {}
     readyEmitted = false
+    def =
+      label: "NoFlo node.js websocket"
+      description: ""
+      type: "noflo"
+      protocol: "websocket"
+      address: "ws://localhost:"+port
+      secret: "my-super-secret2s"
+      id: "2ef763ff-1f28-49b8-b58f-5c6a5c23af23"
+      user: "3f3a8187-0931-4611-8963-239c0dff1934"
+      seenHoursAgo: 11
 
     before (done) ->
       if noflo.isBrowser()
         port = 3892
-        console.log "WebSocket NoFlo runtime should have been set up on #{port}"
+        def.address = "ws://#{window.location.hostname}:#{port}"
+        console.log "WebSocket NoFlo runtime should have been set up on #{def.address}"
         done()
       else
         utils.createNoFloServer port, (err, s) ->
@@ -173,16 +186,6 @@ describe 'Remote runtimes', ->
       done()
 
     it 'should be instantiable', (done) ->
-      def =
-        label: "NoFlo node.js websocket"
-        description: ""
-        type: "noflo"
-        protocol: "websocket"
-        address: "ws://localhost:"+port
-        secret: "my-super-secret2s"
-        id: "2ef763ff-1f28-49b8-b58f-5c6a5c23af23"
-        user: "3f3a8187-0931-4611-8963-239c0dff1934"
-        seenHoursAgo: 11
       c = (RemoteSubGraph.getComponentForRuntime def)(meta)
       chai.expect(c).to.be.an.instanceof noflo.Component
       c.once 'ready', () ->
