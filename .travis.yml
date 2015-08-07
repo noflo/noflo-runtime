@@ -3,6 +3,6 @@ node_js:
   - 0.10
 before_script:
   - npm install -g grunt-cli
-  - node spec/utils/echoserver.js 3889
-  - node spec/utils/nofloserver.js 3892
+  - node spec/utils/echoserver.js 3889 &
+  - node spec/utils/nofloserver.js 3892 &
 sudo: false
