@@ -54,7 +54,7 @@ class RemoteSubGraph extends noflo.Component
           @graph = graph
           @graphName = graph.name or graph.properties.id
           @runtime.setMain graph
-          connection.sendGraph graph, @runtime, =>
+          connection.sendGraph graph, @runtime, ->
             return
           , true
 
@@ -66,10 +66,9 @@ class RemoteSubGraph extends noflo.Component
       else if msg.command == 'packet'
         @onPacketReceived msg.payload
 
-    @runtime.on 'connected', () =>
-      #
-    @runtime.on 'error', () =>
-      console.log 'error'
+    @runtime.on 'connected', ->
+    @runtime.on 'error', (err) ->
+      console.log 'error', err
 
     # Attempt to connect
     @runtime.connect()
