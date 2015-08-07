@@ -29,7 +29,7 @@
     "grunt-noflo-manifest": "^0.1.2",
     "mocha": "~1.21.0",
     "noflo-core": "^0.1.11",
-    "noflo-runtime-websocket": "^0.2.3",
+    "noflo-runtime-websocket": "^0.5.1",
     "websocket": "^1.0.8"
   },
   "keywords": [],
