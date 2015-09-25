@@ -1,8 +1,7 @@
 noflo = require 'noflo'
 RemoteSubGraph = require '../src/RemoteSubGraph'
 
-if noflo.isBrowser()
-else
+unless noflo.isBrowser()
   path = require 'path'
   fs = require 'fs'
 
