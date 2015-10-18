@@ -12,7 +12,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "coffee-script": "^1.8.0",
+    "coffee-script": "^1.10.0",
     "fbp-protocol-client": "^0.1.2",
     "noflo": "^0.5.9"
   },
