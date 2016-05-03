@@ -31,7 +31,7 @@
     "microflo-emscripten": "^0.3.28",
     "mocha": "~2.2.0",
     "noflo-core": "^0.1.11",
-    "noflo-runtime-websocket": "^0.5.1",
+    "noflo-runtime-websocket": "^0.6.2",
     "websocket": "^1.0.8"
   },
   "keywords": [],
