@@ -3,7 +3,7 @@
   "description": "FBP Runtime handling components for NoFlo",
   "author": "Henri Bergius <henri.bergius@iki.fi>",
   "repo": "noflo/noflo-runtime",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "keywords": [],
   "dependencies": {
     "noflo/noflo": "*",
