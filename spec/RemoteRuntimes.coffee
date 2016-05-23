@@ -194,6 +194,7 @@ describe 'Remote runtimes', ->
       done()
 
     it 'should be instantiable', (done) ->
+      @timeout 10*1000
       c = (RemoteSubGraph.getComponentForRuntime def)(meta)
       chai.expect(c).to.be.an.instanceof noflo.Component
       c.once 'ready', () ->
