@@ -14,9 +14,6 @@ else
 
 describe 'Remote runtimes', ->
   describe 'PseudoRuntime over WebSocket in NoFlo', ->
-    beforeEach ->
-      # WebSockets don't work properly in PhantomJS1
-      @skip() if window?.mochaPhantomJS?
     c = null
     server = null
     port = 3888
@@ -83,9 +80,6 @@ describe 'Remote runtimes', ->
 
 
   describe 'MicroFlo simulator direct in NoFlo', ->
-    beforeEach ->
-      # WebSockets don't work properly in PhantomJS1
-      @skip() if window?.mochaPhantomJS?
     c = null
     c = null
     def =
@@ -153,9 +147,6 @@ describe 'Remote runtimes', ->
 
 
   describe 'NoFlo over Websocket in NoFlo', ->
-    beforeEach ->
-      # WebSockets don't work properly in PhantomJS1
-      @skip() if window?.mochaPhantomJS?
     server = null
     c = null
     port = 3891
