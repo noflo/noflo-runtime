@@ -1,6 +1,14 @@
 language: node_js
 node_js:
-  - '4.2'
+- '4.2'
 before_script:
-  - npm install -g grunt-cli
+- npm install -g grunt-cli
 sudo: false
+deploy:
+  provider: npm
+  email: jononor@gmail.com
+  api_key:
+    secure: kVvTV30Du3TKz45vthQ+Spxjqi3pdTxNG1KgXc7+btL3NGDKJZjjNl2O7lIzPrCWDnaniqUgY7HRyc6Li7CN1CXGllECVMVxwJpUvvy3rxeIiEz4hAeqQV1ZpUPEaVavO8Q86CfnmX0J5QpW5xZv4qynCYwiOFek5W0GUi3RvL0=
+  on:
+    tags: true
+    repo: noflo/noflo-runtime
