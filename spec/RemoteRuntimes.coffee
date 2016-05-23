@@ -123,7 +123,8 @@ describe 'Remote runtimes', ->
             c.runtime.removeListener 'execution', checkRunning
             return done()
         c.runtime.on 'execution', checkRunning
-        noflo.graph.loadFBP forward, (graph) ->
+        noflo.graph.loadFBP forward, (err, graph) ->
+          graph = err if not graph # NoFlo <0.6 compat
           c.runtime.setMain graph # XXX: neccesary/correct?
           connection.sendGraph graph, c.runtime, () ->
             c.runtime.start() # does actual upload, MicroFlo specific
@@ -207,7 +208,8 @@ describe 'Remote runtimes', ->
             c.runtime.removeListener 'execution', checkRunning
             return done()
         c.runtime.on 'execution', checkRunning
-        noflo.graph.loadFBP echoNoflo, (graph) ->
+        noflo.graph.loadFBP echoNoflo, (err, graph) ->
+          graph = err if not graph # NoFlo <0.6 compat
           graph.setProperties { id: 'echoNoflo', main: true }
           c.setGraph graph, ->
             c.runtime.start()
