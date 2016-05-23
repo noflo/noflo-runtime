@@ -24,7 +24,11 @@ describe 'ComponentLoader', ->
             # initialized
             ComponentLoader loader, (err) ->
                 chai.expect(err).to.equal null
-                loader.listComponents (components) ->
+                loader.listComponents (err, components) ->
+                    if not components
+                        # NoFlo <0.6 compat
+                        components = err
+                        err = null
                     names = Object.keys(components).filter (c) -> return c.indexOf('runtime/') == 0
                     chai.expect(names).to.have.length 1
                     chai.expect(names[0]).to.equal compName
