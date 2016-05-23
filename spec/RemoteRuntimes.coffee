@@ -189,7 +189,7 @@ describe 'Remote runtimes', ->
       @timeout 4*1000
       c = (RemoteSubGraph.getComponentForRuntime def)(meta)
       chai.expect(c).to.be.an.instanceof noflo.Component
-      return done() # FIXME: figure out why 'ready' is never emitted
+      return setTimeout done, 2*1000 # FIXME: figure out why 'ready' is never emitted
       c.once 'ready', () ->
         done()
     it 'should be possible to upload new graph', (done) ->
