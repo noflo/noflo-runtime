@@ -14,7 +14,7 @@
   "dependencies": {
     "coffee-script": "^1.8.0",
     "fbp-protocol-client": "^0.1.2",
-    "noflo": "^0.5.9"
+    "noflo": "^0.5.18"
   },
   "devDependencies": {
     "chai": "~1.9.0",
