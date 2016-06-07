@@ -1,7 +1,7 @@
 {
   "name": "noflo-runtime",
   "description": "FBP Runtime handling components for NoFlo",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "author": {
     "name": "Henri Bergius",
     "email": "henri.bergius@iki.fi"
@@ -34,7 +34,7 @@
     "noflo-runtime-websocket": "^0.6.2",
     "websocket": "^1.0.8"
   },
-  "keywords": [],
+  "keywords": ["noflo"],
   "scripts": {
     "test": "grunt test"
   },
