@@ -1,7 +1,7 @@
 {
   "name": "noflo-runtime",
   "description": "FBP Runtime handling components for NoFlo",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "author": {
     "name": "Henri Bergius",
     "email": "henri.bergius@iki.fi"
@@ -14,7 +14,7 @@
   "dependencies": {
     "coffee-script": "^1.10.0",
     "fbp-protocol-client": "^0.1.7",
-    "noflo": "0.x >= 0.5"
+    "noflo": "0.x >= 0.6"
   },
   "devDependencies": {
     "chai": "^3.5.0",

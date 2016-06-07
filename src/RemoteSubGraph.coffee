@@ -50,8 +50,10 @@ class RemoteSubGraph extends noflo.Component
         if 'protocol:graph' not in capabilities
           throw new Error "runtime #{@definition.id} does not declare protocol:graph"
 
-        noflo.graph.loadFile definition.graph, (graph) =>
-          @setGraph graph, ->
+        noflo.graph.loadFile definition.graph, (err, graph) =>
+          throw err if err
+          @setGraph graph, (err) ->
+            throw err if err
 
     @runtime.on 'runtime', (msg) =>
       if msg.command is 'runtime'
