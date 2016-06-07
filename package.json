@@ -14,7 +14,7 @@
   "dependencies": {
     "coffee-script": "^1.10.0",
     "fbp-protocol-client": "^0.1.7",
-    "noflo": "^0.5.9"
+    "noflo": "0.x >= 0.5"
   },
   "devDependencies": {
     "chai": "^3.5.0",
@@ -30,7 +30,7 @@
     "grunt-noflo-manifest": "^0.1.2",
     "microflo-emscripten": "^0.3.28",
     "mocha": "^2.5.0",
-    "noflo-core": "^0.1.11",
+    "noflo-core": "^0.3.0",
     "noflo-runtime-websocket": "^0.6.2",
     "websocket": "^1.0.8"
   },
