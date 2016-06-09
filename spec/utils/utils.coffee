@@ -1,6 +1,6 @@
 isBrowser = () ->
   return !(typeof(process) != 'undefined' && process.execPath && process.execPath.indexOf('node') != -1)
-EventEmitter = if isBrowser() then require('emitter') else require('events').EventEmitter
+EventEmitter = require('events').EventEmitter
 
 WebSocketServer = require('websocket').server
 http = require 'http'

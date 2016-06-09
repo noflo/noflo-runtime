@@ -7,7 +7,7 @@
   "keywords": [],
   "dependencies": {
     "noflo/noflo": "*",
-    "component/emitter": "*",
+    "bergie/emitter": "*",
     "flowbased/fbp-protocol-client": "*"
   },
   "remotes": [
