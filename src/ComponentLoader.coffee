@@ -30,7 +30,7 @@ getRuntimesBrowser = (baseDir, callback) ->
   try
     packageDef = require(p)
   catch e
-    return callback e, null
+    return callback null, []
   runtimes = []
   runtimes = packageDef.noflo.runtimes if packageDef.noflo?.runtimes?
   return callback null, runtimes
