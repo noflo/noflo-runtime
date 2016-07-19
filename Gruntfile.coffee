@@ -24,6 +24,10 @@ module.exports = ->
     # Browser build of NoFlo
     noflo_browser:
       build:
+        options:
+          node:
+            __dirname: true
+            child_process: 'empty'
         files:
           'browser/noflo-runtime.js': ['component.json']
 
