@@ -27,7 +27,10 @@ module.exports = ->
         options:
           node:
             __dirname: true
-            child_process: 'empty'
+            child_process: false
+          externals:
+            'coffee-script/register': 'commonjs coffee-script/register'
+            'serialport': 'commonjs serialport'
         files:
           'browser/noflo-runtime.js': ['component.json']
 
