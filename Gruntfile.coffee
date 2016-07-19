@@ -23,14 +23,24 @@ module.exports = ->
 
     # Browser build of NoFlo
     noflo_browser:
-      build:
-        options:
+      options:
+        webpack:
           node:
             __dirname: true
             child_process: false
+            fs: 'empty'
           externals:
             'coffee-script/register': 'commonjs coffee-script/register'
             'serialport': 'commonjs serialport'
+          module:
+            loaders: [
+              { test: /\.coffee$/, loader: "coffee-loader" }
+              { test: /\.json$/, loader: "json-loader" }
+              { test: /\.fbp$/, loader: "fbp-loader" }
+            ]
+          resolve:
+            extensions: ["", ".coffee", ".js"]
+      build:
         files:
           'browser/noflo-runtime.js': ['component.json']
 
