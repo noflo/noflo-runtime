@@ -40,7 +40,7 @@ exports.getComponent = () ->
     if command is 'icon'
       c.outPorts.icon.send payload
       return
-    c.outPorts.packet.send
+    c.outPorts.packet.sendIP new noflo.IP 'data',
       edge: payload.id
       type: command
       group: if payload.group? then payload.group else ''
