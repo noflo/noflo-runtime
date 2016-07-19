@@ -44,14 +44,6 @@ module.exports = ->
         files:
           'browser/noflo-runtime.js': ['component.json']
 
-    # JavaScript minification for the browser
-    uglify:
-      options:
-        report: 'min'
-      noflo:
-        files:
-          './browser/noflo-runtime.min.js': ['./browser/noflo-runtime.js']
-
     # Automated recompilation and testing when developing
     watch:
       files: ['spec/*.coffee', 'components/*.coffee']
@@ -91,7 +83,6 @@ module.exports = ->
   @loadNpmTasks 'grunt-noflo-manifest'
   @loadNpmTasks 'grunt-noflo-browser'
   @loadNpmTasks 'grunt-contrib-coffee'
-  @loadNpmTasks 'grunt-contrib-uglify'
 
   # Grunt plugins used for testing
   @loadNpmTasks 'grunt-contrib-watch'
@@ -106,7 +97,6 @@ module.exports = ->
     @task.run 'noflo_manifest'
     if target is 'all' or target is 'browser'
       @task.run 'noflo_browser'
-      @task.run 'uglify'
 
   @registerTask 'start_servers', 'Start local WebSocket servers', ->
     done = @async()
