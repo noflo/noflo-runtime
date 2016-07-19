@@ -19,6 +19,7 @@
   "devDependencies": {
     "chai": "^3.5.0",
     "coffee-loader": "^0.7.2",
+    "fbp-loader": "^0.1.1",
     "grunt": "~0.4.1",
     "grunt-coffeelint": "~0.0.15",
     "grunt-contrib-coffee": "^1.0.0",
@@ -29,6 +30,7 @@
     "grunt-mocha-test": "^0.12.7",
     "grunt-noflo-browser": "1.0.0-alpha3",
     "grunt-noflo-manifest": "^0.1.2",
+    "json-loader": "^0.5.4",
     "microflo-emscripten": "^0.3.28",
     "mocha": "^2.5.0",
     "noflo-core": "^0.3.0",
