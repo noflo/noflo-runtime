@@ -27,7 +27,7 @@
     "grunt-mocha-phantomjs": "^3.0.0",
     "grunt-mocha-test": "^0.12.7",
     "grunt-noflo-browser": "^0.1.17",
-    "grunt-noflo-manifest": "^0.1.2",
+    "grunt-noflo-manifest": "^0.1.12",
     "microflo-emscripten": "^0.3.28",
     "mocha": "^2.5.0",
     "noflo-core": "^0.3.0",
