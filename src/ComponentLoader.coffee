@@ -24,16 +24,28 @@ getRuntimesNode = (baseDir, callback) ->
     runtimes = packageDef.noflo.runtimes if packageDef.noflo?.runtimes?
     return callback null, runtimes
 
+loadBrowserPackage = (baseDir, callback) ->
+  packagePath = "#{baseDir}/component.json"
+  try
+    packageDef = require packagePath
+    callback null, packageDef
+  catch e
+    req = new XMLHttpRequest
+    req.onreadystatechange = ->
+      return unless req.readyState is 4
+      unless req.status is 200
+        return callback new Error "Failed to load #{url}: HTTP #{req.status}"
+      callback null, JSON.parse req.responseText
+    req.open 'GET', packagePath, true
+    req.send()
+
 getRuntimesBrowser = (baseDir, callback) ->
   # Read runtime definitions from component.json
-  p = baseDir+'/component.json'
-  try
-    packageDef = require(p)
-  catch e
-    return callback null, []
-  runtimes = []
-  runtimes = packageDef.noflo.runtimes if packageDef.noflo?.runtimes?
-  return callback null, runtimes
+  loadBrowserPackage baseDir, (err, packageDef) ->
+    return callback null, [] if err
+    runtimes = []
+    runtimes = packageDef.noflo.runtimes if packageDef.noflo?.runtimes?
+    return callback null, runtimes
 
 module.exports = (loader, done) ->
   getRuntimes = if noflo.isBrowser() then getRuntimesBrowser else getRuntimesNode
