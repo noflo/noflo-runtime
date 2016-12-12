@@ -3,7 +3,7 @@
   "description": "FBP Runtime handling components for NoFlo",
   "author": "Henri Bergius <henri.bergius@iki.fi>",
   "repo": "noflo/noflo-runtime",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "keywords": [],
   "dependencies": {
     "noflo/noflo": "*",
@@ -44,12 +44,12 @@
       "DebugNetwork": "components/DebugNetwork.coffee",
       "GetSource": "components/GetSource.coffee",
       "ListComponents": "components/ListComponents.coffee",
-      "ListGraphs": "components/ListGraphs.coffee",
-      "ListNetworks": "components/ListNetworks.coffee",
       "ListenLibrary": "components/ListenLibrary.coffee",
       "ListenNetwork": "components/ListenNetwork.coffee",
       "ListenProcessErrors": "components/ListenProcessErrors.coffee",
       "ListenRuntime": "components/ListenRuntime.coffee",
+      "ListGraphs": "components/ListGraphs.coffee",
+      "ListNetworks": "components/ListNetworks.coffee",
       "SendComponent": "components/SendComponent.coffee",
       "SendGraph": "components/SendGraph.coffee",
       "SendGraphChanges": "components/SendGraphChanges.coffee"
