@@ -23,17 +23,35 @@ module.exports = ->
 
     # Browser build of NoFlo
     noflo_browser:
-      build:
+      options:
+        baseDir: './'
+        webpack:
+          externals:
+            'repl': 'commonjs repl' # somewhere inside coffee-script
+            'module': 'commonjs module' # somewhere inside coffee-script
+            'child_process': 'commonjs child_process' # somewhere inside coffee-script
+            'jison': 'commonjs jison'
+            'should': 'commonjs should' # used by tests in octo
+            'express': 'commonjs express' # used by tests in octo
+            'highlight': 'commonjs highlight' # used by octo?
+            'microflo-emscripten': 'commonjs microflo-emscripten' # optional?
+            'acorn': 'commonjs acorn' # optional?
+          module:
+            loaders: [
+              { test: /\.coffee$/, loader: "coffee-loader" }
+              { test: /\.json$/, loader: "json-loader" }
+              { test: /\.fbp$/, loader: "fbp-loader" }
+            ]
+          resolve:
+            extensions: ["", ".coffee", ".js"]
+          node:
+            fs: "mock"
+        ignores: [
+          /bin\/coffee/
+        ]
+      main:
         files:
           'browser/noflo-runtime.js': ['component.json']
-
-    # JavaScript minification for the browser
-    uglify:
-      options:
-        report: 'min'
-      noflo:
-        files:
-          './browser/noflo-runtime.min.js': ['./browser/noflo-runtime.js']
 
     # Automated recompilation and testing when developing
     watch:
@@ -74,7 +92,6 @@ module.exports = ->
   @loadNpmTasks 'grunt-noflo-manifest'
   @loadNpmTasks 'grunt-noflo-browser'
   @loadNpmTasks 'grunt-contrib-coffee'
-  @loadNpmTasks 'grunt-contrib-uglify'
 
   # Grunt plugins used for testing
   @loadNpmTasks 'grunt-contrib-watch'
@@ -89,7 +106,6 @@ module.exports = ->
     @task.run 'noflo_manifest'
     if target is 'all' or target is 'browser'
       @task.run 'noflo_browser'
-      @task.run 'uglify'
 
   @registerTask 'start_servers', 'Start local WebSocket servers', ->
     done = @async()
