@@ -30,6 +30,7 @@ describe 'ComponentLoader', ->
                     chai.expect(names).to.have.length 1
                     chai.expect(names[0]).to.equal compName
                     done()
+        return
     it 'should be a RemoteSubGraph', ->
         component = loader.load compName, (err, instance) ->
             chai.expect(err).to.equal null
