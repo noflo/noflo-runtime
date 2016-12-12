@@ -2,13 +2,13 @@ noflo = require 'noflo'
 
 unless noflo.isBrowser()
   chai = require 'chai' unless chai
-  RemoteSubGraph = require '../src/RemoteSubGraph'
+  rt = require '../index'
   utils = require './utils/utils'
-  connection = require '../src/connection'
 else
-  RemoteSubGraph = require 'noflo-runtime/src/RemoteSubGraph'
-  connection = require 'noflo-runtime/src/connection'
+  rt = require 'noflo-runtime'
 
+RemoteSubGraph = rt.RemoteSubGraph
+connection = rt.connection
 
 # TODO: test whole connect/begin/endBracket/disconnect
 
@@ -102,6 +102,10 @@ describe 'Remote runtimes', ->
     readyEmitted = false
 
     before (done) ->
+      try
+        require 'microflo'
+      catch e
+        @skip()
       done()
     after (done) ->
       done()

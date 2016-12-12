@@ -51,7 +51,7 @@ module.exports = ->
         ]
       main:
         files:
-          'browser/noflo-runtime.js': ['component.json']
+          'browser/noflo-runtime.js': ['entry.webpack.js']
 
     # Automated recompilation and testing when developing
     watch:
