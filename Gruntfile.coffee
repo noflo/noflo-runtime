@@ -45,7 +45,7 @@ module.exports = ->
           resolve:
             extensions: ["", ".coffee", ".js"]
           node:
-            fs: "mock"
+            fs: "empty"
         ignores: [
           /bin\/coffee/
         ]

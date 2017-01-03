@@ -35,7 +35,7 @@
     "noflo-core": "^0.3.1",
     "noflo-runtime-websocket": "^0.6.2",
     "tv4": "^1.2.7",
-    "websocket": "^1.0.8"
+    "websocket": "^1.0.24"
   },
   "keywords": [
     "noflo"
