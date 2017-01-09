@@ -6,9 +6,9 @@ before_script:
 sudo: false
 deploy:
   provider: npm
-  email: jononor@gmail.com
+  email: henri.bergius@iki.fi
   api_key:
-    secure: kVvTV30Du3TKz45vthQ+Spxjqi3pdTxNG1KgXc7+btL3NGDKJZjjNl2O7lIzPrCWDnaniqUgY7HRyc6Li7CN1CXGllECVMVxwJpUvvy3rxeIiEz4hAeqQV1ZpUPEaVavO8Q86CfnmX0J5QpW5xZv4qynCYwiOFek5W0GUi3RvL0=
+    secure: KHiUlljcNzcx8hPuyDYDuIGj79Xj3v2eonF/SraJ2lSkrhv+l/RGEsctFrnha6+zRN5adP8ugJ7eD4Z990hb40wWgJIP11RwKheHpz8gBeyvdtYI4FI+1FcLE6X0bvzVaj7FhSQbLS6lLIy74ZMQJsuAWPH8N7PLlov6YlRatRQ=
   on:
     tags: true
     repo: noflo/noflo-runtime
