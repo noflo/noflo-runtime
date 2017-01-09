@@ -34,7 +34,7 @@ loadBrowserPackage = (baseDir, callback) ->
     req.onreadystatechange = ->
       return unless req.readyState is 4
       unless req.status is 200
-        return callback new Error "Failed to load #{url}: HTTP #{req.status}"
+        return callback new Error "Failed to load #{packagePath}: HTTP #{req.status}"
       callback null, JSON.parse req.responseText
     req.open 'GET', packagePath, true
     req.send()
