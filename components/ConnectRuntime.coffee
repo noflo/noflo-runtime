@@ -102,6 +102,10 @@ class ConnectRuntime extends noflo.Component
     @outPorts.runtime.send rt
     @outPorts.runtime.endGroup()
     @outPorts.runtime.disconnect()
+    rt.on 'connected', ->
+      setTimeout ->
+        rt.sendRuntime 'getruntime', {}
+      , 100
     rt.connect()
 
 exports.getComponent = -> new ConnectRuntime
