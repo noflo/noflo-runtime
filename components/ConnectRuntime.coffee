@@ -95,6 +95,7 @@ class ConnectRuntime extends noflo.Component
 
     rt = new Runtime definition
     rt.setParentElement @element if @element
+    rt.once 'capabilities', onCapabilities
     rt.once 'error', onError
     timeout = setTimeout onTimeout, @timeout unless definition.protocol is 'iframe'
     @outPorts.runtime.beginGroup definition.id
@@ -102,7 +103,6 @@ class ConnectRuntime extends noflo.Component
     @outPorts.runtime.endGroup()
     @outPorts.runtime.disconnect()
     rt.on 'connected', ->
-      rt.once 'capabilities', onCapabilities
       setTimeout ->
         rt.sendRuntime 'getruntime', {}
       , 100
