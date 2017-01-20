@@ -97,20 +97,25 @@ class ConnectRuntime extends noflo.Component
     rt.setParentElement @element if @element
     rt.once 'capabilities', onCapabilities
     rt.once 'error', onError
-    timeout = setTimeout onTimeout, @timeout unless definition.protocol is 'iframe'
+    timeout = setTimeout onTimeout, @timeout
     @outPorts.runtime.beginGroup definition.id
     @outPorts.runtime.send rt
     @outPorts.runtime.endGroup()
     @outPorts.runtime.disconnect()
-    rt.on 'connected', ->
+    rt.on 'connected', =>
       unless definition.protocol is 'iframe'
         # We can assume regular runtimes to be ready immediately
         rt.sendRuntime 'getruntime', {}
         return
       # Iframe runtimes sometimes take a while to self-initialize
+      clearTimeout timeout if timeout
+      timeout = setTimeout onTimeout, @timeout
       setTimeout ->
         rt.sendRuntime 'getruntime', {}
       , 1000
+      setTimeout ->
+        rt.sendRuntime 'getruntime', {}
+      , 2000
     rt.connect()
 
 exports.getComponent = -> new ConnectRuntime
