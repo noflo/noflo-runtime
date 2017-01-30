@@ -28,5 +28,5 @@ exports.getComponent = ->
       do callback
       return
     c.params.runtime.sendNetwork 'edges', data
-    out.send edges
+    out.send data
     do callback
