@@ -8,7 +8,7 @@ exports.getComponent = ->
     required: yes
   c.inPorts.add 'runtime',
     datatype: 'object'
-    required: yes
+    required: no
   c.outPorts.add 'out',
     datatype: 'array'
   c.outPorts.add 'error',
@@ -19,9 +19,13 @@ exports.getComponent = ->
     params: 'runtime'
     out: 'out'
     async: true
+    forwardGroups: true
   , (data, groups, out, callback) ->
-    unless c.params.runtime.canDo
-      return callback new Error 'Incorrect runtime instance'
+    unless c.params?.runtime?.canDo
+      # Pass-through
+      out.send data
+      do callback
+      return
     unless c.params.runtime.isConnected()
       # Pass-through since there is no connection
       out.send data
