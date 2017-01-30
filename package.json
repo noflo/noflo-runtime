@@ -57,6 +57,7 @@
       "ListGraphs": "components/ListGraphs.coffee",
       "ListNetworks": "components/ListNetworks.coffee",
       "SendComponent": "components/SendComponent.coffee",
+      "SendEdges": "components/SendEdges.coffee",
       "SendGraph": "components/SendGraph.coffee",
       "SendGraphChanges": "components/SendGraphChanges.coffee"
     }

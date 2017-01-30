@@ -31,7 +31,8 @@
     "components/ListenNetwork.coffee",
     "components/SendComponent.coffee",
     "components/SendGraph.coffee",
-    "components/ListComponents.coffee"
+    "components/ListComponents.coffee",
+    "components/SendEdges.coffee"
   ],
   "json": [
     "spec/data/component.json",
@@ -51,6 +52,7 @@
       "ListGraphs": "components/ListGraphs.coffee",
       "ListNetworks": "components/ListNetworks.coffee",
       "SendComponent": "components/SendComponent.coffee",
+      "SendEdges": "components/SendEdges.coffee",
       "SendGraph": "components/SendGraph.coffee",
       "SendGraphChanges": "components/SendGraphChanges.coffee"
     }
