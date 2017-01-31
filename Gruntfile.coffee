@@ -37,13 +37,15 @@ module.exports = ->
             'microflo-emscripten': 'commonjs microflo-emscripten' # optional?
             'acorn': 'commonjs acorn' # optional?
           module:
-            loaders: [
-              { test: /\.coffee$/, loader: "coffee-loader" }
-              { test: /\.json$/, loader: "json-loader" }
-              { test: /\.fbp$/, loader: "fbp-loader" }
+            rules: [
+              test: /\.coffee$/
+              use: ["coffee-loader"]
+            ,
+              test: /\.fbp$/
+              use: ["fbp-loader"]
             ]
           resolve:
-            extensions: ["", ".coffee", ".js"]
+            extensions: [".coffee", ".js"]
           node:
             fs: "empty"
         ignores: [
