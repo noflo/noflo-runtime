@@ -8,29 +8,33 @@ exports.getComponent = ->
     required: yes
   c.inPorts.add 'runtime',
     datatype: 'object'
-    required: no
+    required: yes
+  c.inPorts.add 'graph',
+    datatype: 'object'
+    required: yes
   c.outPorts.add 'out',
     datatype: 'array'
   c.outPorts.add 'error',
     datatype: 'object'
 
   noflo.helpers.WirePattern c,
-    in: 'edges'
-    params: 'runtime'
+    in: ['edges', 'graph', 'runtime']
     out: 'out'
     async: true
     forwardGroups: true
   , (data, groups, out, callback) ->
-    unless c.params?.runtime?.canDo
+    unless data.runtime?.canDo
       # Pass-through
-      out.send data
+      out.send data.edges
       do callback
       return
-    unless c.params.runtime.isConnected()
+    unless data.runtime.isConnected()
       # Pass-through since there is no connection
-      out.send data
+      out.send data.edges
       do callback
       return
-    c.params.runtime.sendNetwork 'edges', data
-    out.send data
+    data.runtime.sendNetwork 'edges',
+      edges: data.edges
+      graph: data.graph?.name or data.graph?.properties.id
+    out.send data.edges
     do callback
