@@ -42,6 +42,8 @@ exports.getComponent = () ->
       return
     c.outPorts.packet.sendIP new noflo.IP 'data',
       edge: payload.id
+      src: payload.src
+      tgt: payload.tgt
       type: command
       group: if payload.group? then payload.group else ''
       data: if payload.data? then payload.data else ''
