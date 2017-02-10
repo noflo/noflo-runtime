@@ -34,7 +34,11 @@ exports.getComponent = ->
       do callback
       return
     data.runtime.sendNetwork 'edges',
-      edges: data.edges
+      edges: data.edges.map (edge) ->
+        e =
+          src: edge.src or edge.from
+          tgt: edge.tgt or edge.to
+        return e
       graph: data.graph?.name or data.graph?.properties.id
     out.send data.edges
     do callback
