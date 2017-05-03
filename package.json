@@ -32,7 +32,7 @@
     "microflo-emscripten": "^0.3.36",
     "mocha": "^3.2.0",
     "noflo-core": "^0.3.1",
-    "noflo-runtime-websocket": "^0.6.2",
+    "noflo-runtime-websocket": "0.x >= 0.6",
     "tv4": "^1.2.7",
     "websocket": "^1.0.24"
   },
