@@ -28,7 +28,6 @@
     "grunt-mocha-phantomjs": "^4.0.0",
     "grunt-mocha-test": "^0.13.2",
     "grunt-noflo-browser": "^1.2.0",
-    "grunt-noflo-manifest": "^0.1.12",
     "microflo-emscripten": "^0.3.36",
     "mocha": "^3.2.0",
     "noflo-core": "^0.3.1",
@@ -43,22 +42,6 @@
     "test": "grunt test"
   },
   "noflo": {
-    "loader": "src/ComponentLoader.coffee",
-    "components": {
-      "ConnectRuntime": "components/ConnectRuntime.coffee",
-      "DebugNetwork": "components/DebugNetwork.coffee",
-      "GetSource": "components/GetSource.coffee",
-      "ListComponents": "components/ListComponents.coffee",
-      "ListenLibrary": "components/ListenLibrary.coffee",
-      "ListenNetwork": "components/ListenNetwork.coffee",
-      "ListenProcessErrors": "components/ListenProcessErrors.coffee",
-      "ListenRuntime": "components/ListenRuntime.coffee",
-      "ListGraphs": "components/ListGraphs.coffee",
-      "ListNetworks": "components/ListNetworks.coffee",
-      "SendComponent": "components/SendComponent.coffee",
-      "SendEdges": "components/SendEdges.coffee",
-      "SendGraph": "components/SendGraph.coffee",
-      "SendGraphChanges": "components/SendGraphChanges.coffee"
-    }
+    "loader": "src/ComponentLoader.coffee"
   }
 }
