@@ -206,7 +206,8 @@ describe 'Remote runtimes', ->
         noflo.graph.loadFBP echoNoflo, (err, graph) ->
           graph = err if not graph # NoFlo <0.6 compat
           graph.setProperties { id: 'echoNoflo', main: true }
-          c.setGraph graph, ->
+          c.setGraph graph, (err) ->
+            return done err if err
             c.runtime.start()
     it 'should have exported inport and outport', (done) ->
       checkPorts = () ->
