@@ -22,14 +22,14 @@ class RemoteSubGraph extends noflo.Component
     @ready = ready
     @emit 'ready' if ready
 
-  start: ->
+  setUp: (callback) ->
     @runtime.start()
-    super()
+    do callback
 
-  shutdown: ->
+  tearDown: (callback) ->
     @runtime.stop()
     @runtime.disconnect()
-    super()
+    do callback
 
   setDefinition: (definition) ->
     @definition = definition
