@@ -36,6 +36,7 @@ describe 'Remote runtimes', ->
         done()
       else
         utils.createServer port, (err, s) ->
+          return done err if err
           console.log "WebSocket runtime running in port #{port}"
           server = s
           done()
@@ -182,6 +183,7 @@ describe 'Remote runtimes', ->
         done()
       else
         utils.createNoFloServer port, (err, s) ->
+          return done err if err
           console.log "NoFlo server running in port #{port}"
           server = s
           done()
