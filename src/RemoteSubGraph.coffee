@@ -52,6 +52,7 @@ class RemoteSubGraph extends noflo.Component
 
         noflo.graph.loadFile definition.graph, (err, graph) =>
           throw err if err
+          graph.properties.id = definition.graph unless graph.properties.id
           @setGraph graph, (err) ->
             throw err if err
 
