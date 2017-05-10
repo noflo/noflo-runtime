@@ -115,6 +115,7 @@ class RemoteSubGraph extends noflo.Component
     name = definition.id
     # Send data across to remote graph
     @inPorts.add name, @normalizePort(definition), (event, packet) =>
+      packet = null if event in ['connect', 'disconnect']
       @runtime.sendRuntime 'packet',
         port: name
         event: event
