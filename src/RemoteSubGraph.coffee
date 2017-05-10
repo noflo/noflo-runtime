@@ -87,7 +87,7 @@ class RemoteSubGraph extends noflo.Component
     connection.sendGraph graph, @runtime, callback, true
 
   setupPorts: (ports) ->
-    return unless @graph
+    return if @definition?.graph and not @graph
     if @graph
       # We should only emit ready once the remote runtime sent us at least all the ports that
       # the graph exports
