@@ -118,13 +118,21 @@ class RemoteSubGraph extends noflo.Component
 
   prepareInport: (definition) ->
     name = definition.id
+    return if @inPorts.ports[name]
     # Send data across to remote graph
-    @inPorts.add name, @normalizePort(definition), (event, packet) =>
-      packet = null if event in ['connect', 'disconnect']
+    @inPorts.add name, @normalizePort definition
+    @inPorts.ports[name].on 'ip', (ip) ->
+      switch ip.type
+        when 'data'
+          event = data
+        when 'openBracket'
+          event = 'begingroup'
+        when 'closeBracket'
+          event = 'endgroup'
       @runtime.sendRuntime 'packet',
         port: name
         event: event
-        payload: packet
+        payload: ip.data
         graph: @graphName
 
   prepareOutport: (definition) ->
