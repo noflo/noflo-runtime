@@ -13,12 +13,12 @@ class RemoteSubGraph extends noflo.Component
     @graph = null
     @graphName = null
 
-    @inPorts = new noflo.InPorts
-    @outPorts = new noflo.OutPorts
+    super()
 
   isReady: ->
     @ready
   setReady: (ready) ->
+    debug("#{@nodeId} setting ready to #{ready}")
     @ready = ready
     @emit 'ready' if ready
 
@@ -60,9 +60,11 @@ class RemoteSubGraph extends noflo.Component
     if 'protocol:runtime' not in payload.capabilities
       throw new Error "runtime #{definition.id} does not allow protocol:runtime"
     if payload.graph and payload.graph is definition.graph
-      debug "Runtime is already running desired graph #{payload.graph}"
+      debug "#{@nodeId} runtime is already running desired graph #{payload.graph}"
       @graphName = payload.graph
       # Already running the desired graph
+      @runtime.setMain
+        name: payload.graph
       return
     unless definition.graph
       # No graph to upload, accept what runtime has
@@ -71,7 +73,7 @@ class RemoteSubGraph extends noflo.Component
     if 'protocol:graph' not in payload.capabilities
       throw new Error "runtime #{definition.id} does not allow protocol:graph"
 
-    debug "Sending graph #{definition.graph} to runtime (had #{payload.graph})"
+    debug "#{@nodeId} sending graph #{definition.graph} to runtime (had #{payload.graph})"
     noflo.graph.loadFile definition.graph, (err, graph) =>
       throw err if err
       graph.properties.id = definition.graph unless graph.properties.id
@@ -85,11 +87,6 @@ class RemoteSubGraph extends noflo.Component
     connection.sendGraph graph, @runtime, callback, true
 
   setupPorts: (ports) ->
-    if @definition.graph and not @graph
-      # We are going to load and send a new graph to runtime, disregard whatever the runtime
-      # tells initially
-      return
-
     if @graph
       # We should only emit ready once the remote runtime sent us at least all the ports that
       # the graph exports
