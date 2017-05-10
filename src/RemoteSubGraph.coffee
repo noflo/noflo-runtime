@@ -1,6 +1,7 @@
 noflo = require 'noflo'
 connection = require './connection'
 fbpClient = require 'fbp-protocol-client'
+debug = require('debug') 'noflo-runtime:remotesubgraph'
 
 class RemoteSubGraph extends noflo.Component
 
@@ -14,7 +15,6 @@ class RemoteSubGraph extends noflo.Component
 
     @inPorts = new noflo.InPorts
     @outPorts = new noflo.OutPorts
-    # TODO: add connected/disconnected output port by default
 
   isReady: ->
     @ready
@@ -42,36 +42,41 @@ class RemoteSubGraph extends noflo.Component
     @description = definition.description || ''
     @setIcon definition.icon if definition.icon
 
-    @runtime.on 'capabilities', (capabilities) =>
-      if 'protocol:runtime' not in capabilities
-        throw new Error "runtime #{@definition.id} does not declare protocol:runtime"
-
-      if definition.graph
-        if 'protocol:graph' not in capabilities
-          throw new Error "runtime #{@definition.id} does not declare protocol:graph"
-
-        noflo.graph.loadFile definition.graph, (err, graph) =>
-          throw err if err
-          graph.properties.id = definition.graph unless graph.properties.id
-          @setGraph graph, (err) ->
-            throw err if err
-
     @runtime.on 'runtime', (msg) =>
       if msg.command is 'runtime'
-        if msg.payload.graph is null and @graphName is null
-          @setReady true
-        @graphName = msg.payload.graph if msg.payload.graph
+        @handleRuntime definition, msg.payload
       if msg.command == 'ports'
         @setupPorts msg.payload
       else if msg.command == 'packet'
         @onPacketReceived msg.payload
 
-    @runtime.on 'connected', ->
     @runtime.on 'error', (err) ->
-      console.log 'error', err
+      console.error err
 
     # Attempt to connect
     @runtime.connect()
+
+  handleRuntime: (definition, payload) ->
+    if 'protocol:runtime' not in payload.capabilities
+      throw new Error "runtime #{definition.id} does not allow protocol:runtime"
+    if payload.graph and payload.graph is definition.graph
+      debug "Runtime is already running desired graph #{payload.graph}"
+      @graphName = payload.graph
+      # Already running the desired graph
+      return
+    unless definition.graph
+      # No graph to upload, accept what runtime has
+      return
+    # Prepare to upload graph
+    if 'protocol:graph' not in payload.capabilities
+      throw new Error "runtime #{definition.id} does not allow protocol:graph"
+
+    debug "Sending graph #{definition.graph} to runtime (had #{payload.graph})"
+    noflo.graph.loadFile definition.graph, (err, graph) =>
+      throw err if err
+      graph.properties.id = definition.graph unless graph.properties.id
+      @setGraph graph, (err) ->
+        throw err if err
 
   setGraph: (graph, callback) ->
     @graph = graph
