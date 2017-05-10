@@ -124,7 +124,7 @@ class RemoteSubGraph extends noflo.Component
     @inPorts.ports[name].on 'ip', (ip) ->
       switch ip.type
         when 'data'
-          event = data
+          event = 'data'
         when 'openBracket'
           event = 'begingroup'
         when 'closeBracket'
