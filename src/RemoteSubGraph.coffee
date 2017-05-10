@@ -101,11 +101,18 @@ class RemoteSubGraph extends noflo.Component
     @prepareOutport port for port in ports.outPorts
     @setReady true
 
+  normalizePort: (definition) ->
+    type = definition.type or 'all'
+    type = 'all' if type is 'any'
+    return def =
+      datatype: type
+      required: definition.required or false
+      addressable: definition.addressable or false
+
   prepareInport: (definition) ->
     name = definition.id
     # Send data across to remote graph
-    # TODO: set metadata like datatype
-    @inPorts.add name, {}, (event, packet) =>
+    @inPorts.add name, @normalizePort(definition), (event, packet) =>
       @runtime.sendRuntime 'packet',
         port: name
         event: event
@@ -114,11 +121,9 @@ class RemoteSubGraph extends noflo.Component
 
   prepareOutport: (definition) ->
     name = definition.id
-    # TODO: set metadata like datatype
-    port = @outPorts.add name, {}
+    port = @outPorts.add name, @normalizePort definition
 
   onPacketReceived: (packet) ->
-    # TODO: set metadata like datatype
     name = packet.port
     port = @outPorts[name]
     switch packet.event
