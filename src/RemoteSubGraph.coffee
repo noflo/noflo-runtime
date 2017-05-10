@@ -121,7 +121,7 @@ class RemoteSubGraph extends noflo.Component
     return if @inPorts.ports[name]
     # Send data across to remote graph
     @inPorts.add name, @normalizePort definition
-    @inPorts.ports[name].on 'ip', (ip) ->
+    @inPorts.ports[name].on 'ip', (ip) =>
       switch ip.type
         when 'data'
           event = 'data'
