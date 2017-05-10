@@ -63,8 +63,8 @@ class RemoteSubGraph extends noflo.Component
       debug "#{@nodeId} runtime is already running desired graph #{payload.graph}"
       @graphName = payload.graph
       # Already running the desired graph
-      @runtime.setMain
-        name: payload.graph
+      @graph = new noflo.Graph payload.graph
+      @runtime.setMain @graph
       return
     unless definition.graph
       # No graph to upload, accept what runtime has
@@ -87,6 +87,7 @@ class RemoteSubGraph extends noflo.Component
     connection.sendGraph graph, @runtime, callback, true
 
   setupPorts: (ports) ->
+    return unless @graph
     if @graph
       # We should only emit ready once the remote runtime sent us at least all the ports that
       # the graph exports
@@ -96,7 +97,11 @@ class RemoteSubGraph extends noflo.Component
       for exported, metadata of @graph.outports
         matching = ports.outPorts.filter (port) -> port.id is exported
         return unless matching.length
-    
+
+    inportNames = ports.inPorts.map (p) -> p.id
+    outportNames = ports.outPorts.map (p) -> p.id
+    debug "#{@nodeId} received inports #{inportNames.join(', ')}"
+    debug "#{@nodeId} received outports #{outportNames.join(', ')}"
     @setReady false
     # Expose remote graph's exported ports as node ports
     @prepareInport port for port in ports.inPorts
