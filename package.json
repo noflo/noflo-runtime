@@ -13,7 +13,7 @@
   "license": "MIT",
   "dependencies": {
     "coffee-script": "^1.12.1",
-    "fbp-protocol-client": "^0.1.10",
+    "fbp-protocol-client": "^0.1.11",
     "noflo": "0.x >= 0.6"
   },
   "devDependencies": {
