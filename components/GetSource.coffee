@@ -44,7 +44,7 @@ class GetSource extends noflo.AsyncComponent
   unsubscribe: (runtime) ->
     @sources = {}
     @pending = []
-    runtime.off 'component', @handleMessage
+    runtime.removeListener 'component', @handleMessage
     @runtime = null
 
   handleMessage: (message) =>
