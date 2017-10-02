@@ -1,90 +1,77 @@
 noflo = require 'noflo'
 
-# @runtime all
+exports.getComponent = ->
+  c = new noflo.Component
+  c.icon = 'code'
+  c.inPorts.add 'name',
+    datatype: 'string'
+    description: 'Name of the component to get'
+  c.inPorts.add 'runtime',
+    datatype: 'object'
+    description: 'Runtime to communicate with'
+  c.outPorts.add 'source',
+    datatype: 'object'
+  c.outPorts.add 'error',
+    datatype: 'error'
+  c.runtime = null
 
-class GetSource extends noflo.AsyncComponent
-  icon: 'code'
-  constructor: ->
-    @sources = {}
-    @pending = []
-    @runtime = null
+  c.tearDown = (callback) ->
+    do unsubscribe
+    do callback
 
-    @inPorts = new noflo.InPorts
-      name:
-        datatype: 'string'
-        description: 'Name of the component to get'
-      runtime:
-        datatype: 'object'
-        description: 'Runtime to communicate with'
-        process: (event, payload) =>
-          return unless event is 'data'
-          unless payload.canDo 'component:getsource'
-            return @error new Error "Runtime #{payload.definition.id} cannot get sources"
-          @subscribe payload
-    @outPorts = new noflo.OutPorts
-      source:
-        datatype: 'object'
-      error:
-        datatype: 'object'
-        required: false
+  unsubscribe: ->
+    return unless c.runtime
+    c.runtime.rt.removeListener 'component', handleMessage
+    c.runtime = null
 
-    super 'name', 'source'
-
-  subscribe: (runtime) ->
-    return if @runtime is runtime
-    @unsubscribe @runtime if @runtime
-    runtime.on 'component', @handleMessage
-    @runtime = runtime
-    if @runtime.connecting
-      @runtime.once 'status', =>
-        do @flush
-    else
-      do @flush
-
-  unsubscribe: (runtime) ->
-    @sources = {}
-    @pending = []
-    runtime.removeListener 'component', @handleMessage
-    @runtime = null
-
-  handleMessage: (message) =>
+  handleMessage = (message) ->
+    return unless c.runtime
     return unless message.command is 'source'
-    @sources["#{message.payload.library}/#{message.payload.name}"] = message.payload
+    componentName = [message.payload.library, message.payload.name].join '/'
+    # Cache the component
+    c.runtime.sources[componentName] = message.payload
 
-  doAsync: (name, callback) ->
-    if not @runtime or @runtime.connecting
-      @pending.push
-        name: name
-        callback: callback
+  c.process (input, output) ->
+    if input.hasData 'runtime'
+      # New runtime connection
+      runtime = input.getData 'runtime'
+      if c.runtime
+        if c.runtime.rt is runtime
+          # No-op if this runtime is same as what we had before
+          return output.done()
+        # Unsubscribe previous
+        do unsubscribe
+      if runtime.isConnected() and not runtime.canDo 'component:getsource'
+        output.done new Error "Runtime #{runtime.definition.id} cannot get sources"
+        return
+      # Keep the context open
+      c.runtime =
+        rt: runtime
+        sources: {}
+      runtime.on 'component', handleMessage
+      output.done()
       return
-
-    @runtime.sendComponent 'getsource',
+    return unless input.hasData 'name'
+    # Requesting component sources
+    return unless c.runtime
+    name = input.getData 'name'
+    if c.runtime.sources[name]
+      # We already have this component cached
+      output.sendDone
+        source: c.runtime.sources[name]
+      return
+    # Request the sources from the runtime
+    c.runtime.rt.sendComponent 'getsource',
       name: name
-
+    # Wait for response
     rounds = 10
-
-    poll = =>
+    poll = ->
       rounds--
-
-      if @sources[name]
-        @outPorts.source.beginGroup name
-        @outPorts.source.send @sources[name]
-        @outPorts.source.endGroup()
-        return callback()
-
-      if rounds <= 0
-        return callback new Error "Runtime didn't provide source for #{name} in time"
-
+      if c.runtime.sources[name]
+        output.sendDone
+          source: c.runtime.sources[name]
+        return
+      unless rounds
+        output.done new Error "Runtime didn't provide source for #{name} in time"
       setTimeout poll, 100
-    setTimeout poll, 200
-
-  shutdown: ->
-    return unless @runtime
-    unsubscribe @runtime
-
-  flush: ->
-    while @pending.length
-      task = @pending.shift()
-      @doAsync task.name, task.callback
-
-exports.getComponent = -> new GetSource
+    setTimeout poll, 100

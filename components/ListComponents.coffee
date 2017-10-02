@@ -3,12 +3,10 @@ noflo = require 'noflo'
 onRuntimeConnected = null
 onRuntimeComponent = null
 
-subscribe = (runtime, port) ->
+subscribe = (runtime, output) ->
   requestListing = ->
     return unless runtime.canDo 'protocol:component'
     runtime.sendComponent 'list'
-    port.connect()
-
   onRuntimeConnected = -> do requestListing
   onRuntimeComponent = (message) ->
     return unless message.command is 'component'
@@ -19,57 +17,48 @@ subscribe = (runtime, port) ->
       icon: message.payload.icon
       subgraph: message.payload.subgraph or false
       runtime: message.payload.runtime or runtime.definition?.id
-      inports: []
-      outports: []
-    for portDef in message.payload.inPorts
-      definition.inports.push
-        name: portDef.id
-        type: portDef.type
-        required: portDef.required
-        description: portDef.description
-        addressable: portDef.addressable
-        values: portDef.values
-        default: portDef.default
-    for portDef in message.payload.outPorts
-      definition.outports.push
-        name: portDef.id
-        type: portDef.type
-        required: portDef.required
-        description: portDef.description
-        addressable: portDef.addressable
-    port.send
-      componentDefinition: definition
-
+      inports: message.payload.inPorts.slice(0).map (port) ->
+        port.name = port.id
+        delete port.id
+        return port
+      outports: message.payload.outPorts.slice(0).map (port) ->
+        port.name = port.id
+        delete port.id
+        return port
+    output.send
+      out:
+        componentDefinition: definition
   runtime.on 'capabilities', onRuntimeConnected
   runtime.on 'component', onRuntimeComponent
   do requestListing if runtime.isConnected()
 
-unsubscribe = (runtime, port) ->
-  port.disconnect()
+unsubscribe = (runtime, context) ->
   runtime.removeListener 'capabilities', onRuntimeConnected if onRuntimeConnected
   runtime.removeListener 'component', onRuntimeComponent if onRuntimeComponent
   onRuntimeConnected = null
   onRuntimeComponent = null
+  context.deactivate()
 
 exports.getComponent = ->
   c = new noflo.Component
   c.description = 'List components available on a runtime'
-  c.runtime = null
   c.inPorts.add 'runtime',
     datatype: 'object'
-    process: (event, payload) ->
-      return unless event is 'data'
-      unsubscribe c.runtime, c.outPorts.out if c.runtime
-      if payload.isConnected() and not payload.canDo 'protocol:component'
-        return c.error new Error "Runtime #{payload.definition.id} is not able to list components"
-      c.runtime = payload
-      subscribe c.runtime, c.outPorts.out
   c.outPorts.add 'out',
     datatype: 'object'
   c.outPorts.add 'error',
     datatype: 'object'
 
-  c.shutdown = ->
-    unsubscribe c.runtime, c.outPorts.out if c.runtime
+  c.tearDown = (callback) ->
+    unsubcribe c.runtime.rt, c.runtime.ctx if c.runtime
+    c.runtime = null
+    do callback
 
-  c
+  c.process (input, output, context) ->
+    return unless input.hasData 'runtime'
+    runtime = input.getData 'runtime'
+    unsubscribe c.runtime.rt, c.runtime.ctx if c.runtime
+    c.runtime =
+      rt: payload
+      ctx: context
+    subscribe c.runtime, output
