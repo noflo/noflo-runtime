@@ -1,7 +1,7 @@
 noflo = require 'noflo'
 chai = require 'chai' unless chai
 ListenRuntime = require '../components/ListenRuntime.coffee'
-BaseRuntime = require '../node_modules/fbp-protocol-client/src/base'
+BaseRuntime = require '../node_modules/fbp-protocol-client/lib/base'
 
 describe 'ListenRuntime component', ->
   component = null
