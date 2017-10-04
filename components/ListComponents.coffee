@@ -8,9 +8,13 @@ subscribe = (runtime, port) ->
     return unless runtime.canDo 'protocol:component'
     runtime.sendComponent 'list'
     port.connect()
+    port.beginGroup 'list'
 
   onRuntimeConnected = -> do requestListing
   onRuntimeComponent = (message) ->
+    if message.command is 'componentsready'
+      port.endGroup 'list'
+
     return unless message.command is 'component'
     return if message.payload.name in ['Graph', 'ReadDocument']
     definition =
