@@ -1,7 +1,8 @@
 noflo = require 'noflo'
 chai = require 'chai' unless chai
-ListenRuntime = require '../components/ListenRuntime.coffee'
 BaseRuntime = require '../node_modules/fbp-protocol-client/lib/base'
+path = require 'path'
+baseDir = path.resolve __dirname, '../'
 
 describe 'ListenRuntime component', ->
   component = null
@@ -10,28 +11,35 @@ describe 'ListenRuntime component', ->
   connectedSocket = null
   disconnectedSocket = null
   graphSocket = null
+  loader = null
 
-  beforeEach ->
-    component = ListenRuntime.getComponent()
-    runtime = new BaseRuntime
-      capabilities: [
-        'protocol:runtime'
-        'protocol:graph'
-        'protocol:component'
-        'protocol:network'
-      ]
+  before ->
+    @timeout 4000
+    loader = new noflo.ComponentLoader baseDir
+  beforeEach (done) ->
+    loader.load 'runtime/ListenRuntime', (err, instance) ->
+      return done err if err
+      component = instance
+      runtime = new BaseRuntime
+        capabilities: [
+          'protocol:runtime'
+          'protocol:graph'
+          'protocol:component'
+          'protocol:network'
+        ]
 
-    runtimeSocket = noflo.internalSocket.createSocket()
-    component.inPorts.runtime.attach runtimeSocket
+      runtimeSocket = noflo.internalSocket.createSocket()
+      component.inPorts.runtime.attach runtimeSocket
 
-    connectedSocket = noflo.internalSocket.createSocket()
-    component.outPorts.connected.attach connectedSocket
+      connectedSocket = noflo.internalSocket.createSocket()
+      component.outPorts.connected.attach connectedSocket
 
-    disconnectedSocket = noflo.internalSocket.createSocket()
-    component.outPorts.disconnected.attach disconnectedSocket
+      disconnectedSocket = noflo.internalSocket.createSocket()
+      component.outPorts.disconnected.attach disconnectedSocket
 
-    graphSocket = noflo.internalSocket.createSocket()
-    component.outPorts.graph.attach graphSocket
+      graphSocket = noflo.internalSocket.createSocket()
+      component.outPorts.graph.attach graphSocket
+      done()
 
   describe 'instantiation', ->
     it 'should have a "runtime" inport', ->

@@ -18,20 +18,11 @@ exports.getComponent = () ->
     datatype: 'bang'
     description: 'Command sent to the runtime'
 
-  c.inPorts.enable.on 'data', (data) ->
-    console.log "data:"
-    console.log data
-
-  noflo.helpers.WirePattern c,
-    in: 'enable'
-    params: ['runtime', 'graph']
-    forwardGroups: true
-    out: 'sent'
-  , (data, groups, out) ->
-    return unless c.params.runtime? and c.params.graph?
-    c.params.runtime.sendNetwork 'debug',
-      graph: c.params.graph.name or c.params.graph.properties.id
-      enable: data
-    out.send true
-
-  c
+  c.process (input, output) ->
+    return unless input.hasData 'runtime', 'graph', 'enable'
+    [runtime, graph, enable] = input.getData 'runtime', 'graph', 'enable'
+    runtime.sendNetwork 'debug',
+      graph: graph.name or graph.properties.id
+      enable: enable
+    output.sendDone
+      sent: true

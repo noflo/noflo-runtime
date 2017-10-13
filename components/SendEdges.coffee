@@ -5,40 +5,34 @@ exports.getComponent = ->
   c.description = 'Send edges selected by user to runtime'
   c.inPorts.add 'edges',
     datatype: 'array'
-    required: yes
   c.inPorts.add 'runtime',
     datatype: 'object'
-    required: yes
   c.inPorts.add 'graph',
     datatype: 'object'
-    required: yes
   c.outPorts.add 'out',
     datatype: 'array'
   c.outPorts.add 'error',
     datatype: 'object'
 
-  noflo.helpers.WirePattern c,
-    in: ['edges', 'graph', 'runtime']
-    out: 'out'
-    async: true
-    forwardGroups: true
-  , (data, groups, out, callback) ->
-    unless data.runtime?.canDo
+  c.process (input, output) ->
+    return unless input.hasData 'edges', 'runtime', 'graph'
+    [edges, runtime, graph] = input.getData 'edges', 'runtime', 'graph'
+    unless runtime?.canDo
       # Pass-through
-      out.send data.edges
-      do callback
+      output.sendDone
+        out: edges
       return
-    unless data.runtime.isConnected()
+    unless runtime.isConnected()
       # Pass-through since there is no connection
-      out.send data.edges
-      do callback
+      output.sendDone
+        out: edges
       return
-    data.runtime.sendNetwork 'edges',
-      edges: data.edges.map (edge) ->
+    runtime.sendNetwork 'edges',
+      edges: edges.map (edge) ->
         e =
           src: edge.src or edge.from
           tgt: edge.tgt or edge.to
         return e
-      graph: data.graph?.name or data.graph?.properties.id
-    out.send data.edges
-    do callback
+      graph: graph.name or graph.properties?.id
+    output.sendDone
+      out: edges

@@ -1,107 +1,85 @@
 noflo = require 'noflo'
 fbpClient = require 'fbp-protocol-client'
 
-class ConnectRuntime extends noflo.Component
-  constructor: ->
-    @element = null
-    @timeout = 1000
-    @inPorts = new noflo.InPorts
-      definition:
-        datatype: 'object'
-        description: 'Runtime definition object'
-        required: true
-      element:
-        datatype: 'object'
-        description: 'DOM element to be set as Runtime parent element'
-        required: false
-      timeout:
-        datatype: 'number'
-        description: 'How long to try connecting, in milliseconds'
-        default: 1000
-        required: false
-    @outPorts = new noflo.OutPorts
-      runtime:
-        datatype: 'object'
-        description: 'FBP Runtime instance'
-        required: false
-      connected:
-        datatype: 'object'
-        description: 'Connected FBP Runtime instance'
-        required: false
-      unavailable:
-        datatype: 'object'
-        description: 'Unavailable FBP Runtime instance'
-        required: false
-      error:
-        datatype: 'object'
-        description: 'Runtime connection error'
-        required: false
-
-    @inPorts.on 'definition', 'data', (data) =>
-      @connect data
-    @inPorts.on 'element', 'data', (@element) =>
-    @inPorts.on 'timeout', 'data', (@timeout) =>
-
-  validate: (definition) ->
+exports.getComponent = ->
+  c = new noflo.Component
+  c.inPorts.add 'definition',
+    datatype: 'object'
+    description: 'Runtime definition object'
+    required: true
+  c.inPorts.add 'element',
+    datatype: 'object'
+    description: 'DOM element to be set as Runtime parent element'
+    required: false
+  c.inPorts.add 'timeout',
+    datatype: 'number'
+    description: 'How long to try connecting, in milliseconds'
+    default: 1000
+    required: false
+    control: true
+  c.outPorts.add 'runtime',
+    datatype: 'object'
+    description: 'FBP Runtime instance'
+    required: false
+  c.outPorts.add 'connected',
+    datatype: 'object'
+    description: 'Connected FBP Runtime instance'
+    required: false
+  c.outPorts.add 'unavailable',
+    datatype: 'object'
+    description: 'Unavailable FBP Runtime instance'
+    required: false
+  c.outPorts.add 'error',
+    datatype: 'object'
+    description: 'Runtime connection error'
+    required: false
+  c.process = (input, output) ->
+    return unless input.hasData 'definition'
+    definition = input.getData 'definition'
     unless definition.protocol
-      @outPorts.error.send new Error 'Protocol definition required'
-      @outPorts.error.disconnect()
-      return false
+      output.done new Error 'Protocol definition required'
+      return
     unless definition.address
-      @outPorts.error.send new Error 'Address definition required'
-      @outPorts.error.disconnect()
-      return false
-    true
+      output.done new Error 'Address definition required'
+      return
 
-  connect: (definition) ->
-    return unless @validate definition
+    timeout = if input.hasData('timeout') then input.getData('timeout') else 1000
+    element = if input.hasData('element') then input.getData('element') else null
 
     try
       Runtime = fbpClient.getTransport definition.protocol
     catch e
-      @outPorts.error.send new Error "Protocol #{definition.protocol} is not supported"
-      @outPorts.error.disconnect()
+      output.done new Error "Protocol #{definition.protocol} is not supported"
       return
 
-    onError = (e) =>
+    onError = (e) ->
       clearTimeout timeout if timeout
       rt.removeListener 'capabilities', onCapabilities
-      if rt and @outPorts.unavailable.isAttached()
-        @outPorts.unavailable.beginGroup definition.id
-        @outPorts.unavailable.send rt
-        @outPorts.unavailable.endGroup()
-        @outPorts.unavailable.disconnect()
+      if rt and c.outPorts.unavailable.isAttached()
+        output.send
+          unavailable: rt
         return
-      @outPorts.error.send e
-      @outPorts.error.disconnect()
+      output.done e
       return
 
-    onTimeout = =>
-      @outPorts.unavailable.beginGroup definition.id
-      @outPorts.unavailable.send rt
-      @outPorts.unavailable.endGroup()
-      @outPorts.unavailable.disconnect()
+    onTimeout = ->
+      output.sendDone
+        unavailable: rt
       rt.removeListener 'error', onError
       rt.removeListener 'capabilities', onCapabilities
       rt.disconnect()
 
-    onCapabilities = =>
+    onCapabilities = ->
       clearTimeout timeout if timeout
       rt.removeListener 'error', onError
-      @outPorts.connected.beginGroup definition.id
-      @outPorts.connected.send rt
-      @outPorts.connected.endGroup()
-      @outPorts.connected.disconnect()
+      output.sendDone
+        connected: rt
 
     rt = new Runtime definition
-    rt.setParentElement @element if @element
-    timeout = setTimeout onTimeout, @timeout
+    rt.setParentElement element if element
+    timeout = setTimeout onTimeout, timeout
     rt.once 'capabilities', onCapabilities
     rt.once 'error', onError
-    @outPorts.runtime.beginGroup definition.id
-    @outPorts.runtime.send rt
-    @outPorts.runtime.endGroup()
-    @outPorts.runtime.disconnect()
+    output.send
+      runtime: rt
     rt.connect()
-
-exports.getComponent = -> new ConnectRuntime

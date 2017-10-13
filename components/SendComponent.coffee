@@ -26,35 +26,34 @@ exports.getComponent = ->
   c = new noflo.Component
   c.inPorts.add 'component',
     datatype: 'object'
-    required: yes
   c.inPorts.add 'runtime',
     datatype: 'object'
-    required: yes
+    control: true
   c.outPorts.add 'out',
     datatype: 'object'
   c.outPorts.add 'error',
     datatype: 'object'
 
-  noflo.helpers.WirePattern c,
-    in: 'component'
-    params: 'runtime'
-    out: 'out'
-    async: true
-  , (data, groups, out, callback) ->
-    unless c.params.runtime.canDo
-      return callback new Error 'Incorrect runtime instance'
-
-    if c.params.runtime.isConnected()
-      sendComponent data, c.params.runtime, (err) ->
-        return callback err if err
-        out.send data
-        do callback
+  c.process (input, output) ->
+    return unless input.hasData 'component', 'runtime'
+    [component, runtime] = input.getData 'component', 'runtime'
+    unless runtime.canDo
+      output.done new Error 'Incorrect runtime instance'
       return
 
-    c.params.runtime.once 'capabilities', ->
-      sendComponent data, c.params.runtime, (err) ->
-        return callback err if err
-        out.send data
-        do callback
+    if runtime.isConnected()
+      sendComponent component, runtime, (err) ->
+        if err
+          output.done err
+          return
+        output.sendDone
+          out: component
+      return
 
-  c
+    runtime.once 'capabilities', ->
+      sendComponent component, runtime, (err) ->
+        if err
+          output.done err
+          return
+        output.sendDone
+          out: component
