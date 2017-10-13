@@ -1,60 +1,46 @@
 noflo = require 'noflo'
 
-class ListenRuntime extends noflo.Component
-  constructor: ->
-    @element = null
-    @inPorts = new noflo.InPorts
-      runtime:
-        datatype: 'object'
-        description: 'FBP Runtime instance'
-        required: true
-    @outPorts = new noflo.OutPorts
-      connected:
-        datatype: 'object'
-        description: 'FBP Runtime instance'
-        required: true
-      disconnected:
-        datatype: 'object'
-        description: 'Runtime connection error'
-        required: false
-      graph:
-        datatype: 'object'
-        description: 'Changes to runtime graph'
-        required: false
+exports.getComponent = ->
+  c = new noflo.Component
+  c.inPorts.add 'runtime',
+    datatype: 'object'
+    description: 'FBP Runtime instance'
+  c.outPorts.add 'connected',
+    datatype: 'object'
+    description: 'FBP Runtime instance'
+  c.outPorts.add 'disconnected',
+    datatype: 'object'
+    description: 'Runtime connection error'
+  c.outPorts.add 'graph',
+    datatype: 'object'
+    description: 'Changes to runtime graph'
 
-    # TODO: listen to status too?
+  c.runtime = null
+  unsubscribe = ->
+    return unless c.runtime
+    c.runtime.rt.removeListener 'connected', c.runtime.onConnected
+    c.runtime.rt.removeListener 'disconnected', c.runtime.onDisconnected
+    c.runtime.rt.removeListener 'graph', c.runtime.onGraph
+    c.runtime.ctx.deactivate()
+    c.runtime = null
+  c.tearDown = (callback) ->
+    do unsubscribe
+    do callback
 
-    @inPorts.on 'runtime', 'data', (runtime) =>
-      @updateListeners runtime
-
-  updateListeners: (runtime) ->
-    @removeListeners()
-    @runtime = runtime
-    @runtime.on 'connected', @onConnected
-    @runtime.on 'disconnected', @onDisconnected
-    @runtime.on 'graph', @onGraph
-
-  removeListeners: () ->
-    return unless @runtime
-    @runtime.removeListener 'connected', @onConnected
-    @runtime.removeListener 'disconnected', @onDisconnected
-
-    @runtime.removeListener 'graph', @onGraph
-
-  onConnected: () =>
-    @outPorts.connected.send @runtime
-    @outPorts.connected.disconnect()
-
-  onDisconnected: () =>
-    @outPorts.disconnected.send @runtime
-    @outPorts.disconnected.disconnect()
-
-  onGraph: (data) =>
-    @outPorts.graph.send data
-    @outPorts.graph.disconnect()
-
-  shutdown: () ->
-    @removeListener()
-
-exports.getComponent = -> new ListenRuntime
-
+  c.process (input, output, context) ->
+    return unless input.hasData 'runtime'
+    c.runtime =
+      rt: input.getData 'runtime'
+      onConnected: ->
+        output.send
+          connected: c.runtime.rt
+      onDisconnected: ->
+        output.send
+          disconnected: c.runtime.rt
+      onGraph: (data) ->
+        output.send
+          graph: data
+      ctx: context
+    c.runtime.rt.on 'connected', c.runtime.onConnected
+    c.runtime.rt.on 'disconnected', c.runtime.onDisconnected
+    c.runtime.rt.on 'graph', c.runtime.onGraph
