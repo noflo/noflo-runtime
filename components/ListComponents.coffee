@@ -49,6 +49,7 @@ exports.getComponent = ->
   c.outPorts.add 'error',
     datatype: 'object'
 
+  c.runtime = null
   c.tearDown = (callback) ->
     unsubcribe c.runtime.rt, c.runtime.ctx if c.runtime
     c.runtime = null
@@ -59,6 +60,6 @@ exports.getComponent = ->
     runtime = input.getData 'runtime'
     unsubscribe c.runtime.rt, c.runtime.ctx if c.runtime
     c.runtime =
-      rt: payload
+      rt: runtime
       ctx: context
-    subscribe c.runtime, output
+    subscribe c.runtime.rt, output

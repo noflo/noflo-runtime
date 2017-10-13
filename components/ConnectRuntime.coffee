@@ -33,7 +33,7 @@ exports.getComponent = ->
     datatype: 'object'
     description: 'Runtime connection error'
     required: false
-  c.process = (input, output) ->
+  c.process (input, output) ->
     return unless input.hasData 'definition'
     definition = input.getData 'definition'
     unless definition.protocol

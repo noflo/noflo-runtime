@@ -12,7 +12,7 @@ exports.getComponent = ->
   c.outPorts.add 'source',
     datatype: 'object'
   c.outPorts.add 'error',
-    datatype: 'error'
+    datatype: 'object'
   c.runtime = null
 
   c.tearDown = (callback) ->
