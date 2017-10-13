@@ -1,56 +1,84 @@
 noflo = require 'noflo'
 
-exports.getComponent = () ->
+exports.getComponent = ->
   c = new noflo.Component
   c.description = 'Listen to a network on a runtime'
-
   c.inPorts.add 'runtime',
     datatype: 'object'
     description: 'Runtime to listen from'
-    process: (event, payload) ->
-      return unless event is 'data'
-      c.updateListeners payload, c.graph
   c.inPorts.add 'graph',
     datatype: 'object'
     description: 'Graph to listen to'
-    process: (event, payload) ->
-      return unless event is 'data'
-      c.updateListeners c.runtime, payload
-
-  c.outPorts.add 'packet',
+  c.outPorts.add 'started',
     datatype: 'object'
-  c.outPorts.add 'icon',
+  c.outPorts.add 'stopped',
+    datatype: 'object'
+  c.outPorts.add 'status',
+    datatype: 'object'
+  c.outPorts.add 'output',
     datatype: 'object'
   c.outPorts.add 'error',
     datatype: 'object'
+  c.outPorts.add 'processerror',
+    datatype: 'object'
+  c.outPorts.add 'icon',
+    datatype: 'object'
+  c.outPorts.add 'packet',
+    datatype: 'object'
 
-  c.updateListeners = (runtime, graph) ->
-    c.runtime.removeListener 'network', c.onNetworkPacket if c.runtime
-    c.runtime = runtime
-    c.graph = graph
-    c.runtime.on 'network', c.onNetworkPacket if c.runtime
+  unsubscribe = (runtime) ->
+    return unless runtime
+    runtime.rt.removeListener 'network', runtime.listener
+    runtime.ctx.deactivate()
 
-  c.onNetworkPacket = ({command, payload}) ->
-    if command is 'error'
-      c.outPorts.error.send payload
+  c.tearDown = (callback) ->
+    unsubscribe c.runtime if c.runtime
+    c.runtime = null
+    c.graph = null
+    do callback
+
+  c.process (input, output, context) ->
+    if input.hasData 'graph'
+      # Updating the graph context to follow
+      c.graph = input.getData 'graph'
+      output.done()
       return
-    return unless payload.graph
-    return unless c.graph
-    return unless payload.graph is c.graph.name
-    if command is 'icon'
-      c.outPorts.icon.send payload
+    if input.hasData 'runtime'
+      unsubscribe c.runtime if c.runtime
+      c.runtime =
+        rt: input.getData 'runtime'
+        ctx: context
+        listener: ({command, payload}) ->
+          if command is 'error'
+            output.send
+              error: payload
+            return
+
+          if payload.graph isnt c.graph?.name and payload.graph isnt c.graph?.properties?.id
+            # For non-errors we're not interested in events
+            # affecting other networks than the current one
+            return
+
+          if command in ['connect', 'begingroup', 'data', 'endgroup', 'disconnect']
+            # Special handling for packets
+            output.send
+              packet: new noflo.IP 'data',
+                edge: payload.id
+                src: payload.src
+                tgt: payload.tgt
+                type: command
+                group: if payload.group? then payload.group else ''
+                data: if payload.data? then payload.data else ''
+                subgraph: if payload.subgraph? then payload.subgraph else ''
+                runtime: c.runtime.rt.definition.id
+            return
+
+          return unless command in ['started', 'stopped', 'status', 'output', 'processerror', 'icon']
+          # Other supported runtime events, send to appropriate port
+          result = {}
+          result[command] = payload
+          output.send result
+          return
+
+      c.runtime.rt.on 'network', c.runtime.listener
       return
-    c.outPorts.packet.sendIP new noflo.IP 'data',
-      edge: payload.id
-      src: payload.src
-      tgt: payload.tgt
-      type: command
-      group: if payload.group? then payload.group else ''
-      data: if payload.data? then payload.data else ''
-      subgraph: if payload.subgraph? then payload.subgraph else ''
-      runtime: c.runtime.definition.id
-
-  c.shutdown = ->
-    c.updateListeners null, null
-
-  c
