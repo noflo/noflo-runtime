@@ -27,6 +27,7 @@ exports.getComponent = ->
     do unsubscribe
     do callback
 
+  c.forwardBrackets = {}
   c.process (input, output, context) ->
     return unless input.hasData 'runtime'
     c.runtime =

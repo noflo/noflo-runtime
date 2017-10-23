@@ -54,7 +54,7 @@ exports.getComponent = ->
     unsubcribe c.runtime.rt, c.runtime.ctx if c.runtime
     c.runtime = null
     do callback
-
+  c.forwardBrackets = {}
   c.process (input, output, context) ->
     return unless input.hasData 'runtime'
     runtime = input.getData 'runtime'
