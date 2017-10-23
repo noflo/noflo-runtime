@@ -37,6 +37,7 @@ exports.getComponent = ->
     c.graph = null
     do callback
 
+  c.forwardBrackets = {}
   c.process (input, output, context) ->
     if input.hasData 'graph'
       # Updating the graph context to follow
