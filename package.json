@@ -44,6 +44,7 @@
     "test": "grunt test"
   },
   "noflo": {
-    "loader": "src/ComponentLoader.coffee"
+    "loader": "src/ComponentLoader.coffee",
+    "icon": "truck"
   }
 }
