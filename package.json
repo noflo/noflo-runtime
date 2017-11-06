@@ -14,26 +14,25 @@
   "dependencies": {
     "coffee-script": "^1.12.1",
     "debug": "^3.0.0",
-    "fbp-protocol-client": "^0.1.13",
-    "noflo": "0.x >= 0.8"
+    "fbp-protocol-client": "^0.2.0",
+    "noflo": "^1.0.0"
   },
   "devDependencies": {
     "chai": "^4.0.0",
-    "coffee-loader": "^0.7.2",
-    "fbp-loader": "^0.1.1",
+    "coffeescript": "^2.0.2",
     "grunt": "^1.0.1",
     "grunt-coffeelint": "^0.0.16",
-    "grunt-contrib-coffee": "^1.0.0",
+    "grunt-contrib-coffee": "^2.0.0",
     "grunt-contrib-connect": "^1.0.0",
     "grunt-contrib-watch": "^1.0.0",
     "grunt-mocha-phantomjs": "^4.0.0",
     "grunt-mocha-test": "^0.13.2",
-    "grunt-noflo-browser": "^1.4.1",
+    "grunt-noflo-browser": "^1.5.1",
     "microflo": "^0.4.0",
     "microflo-emscripten": "^0.3.36",
     "mocha": "^3.2.0",
-    "noflo-core": "^0.4.1",
-    "noflo-runtime-websocket": "0.x >= 0.8",
+    "noflo-core": ">= 0.4.1",
+    "noflo-runtime-websocket": ">= 0.9.0",
     "tv4": "^1.2.7",
     "websocket": "^1.0.24"
   },
