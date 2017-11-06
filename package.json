@@ -15,7 +15,7 @@
     "coffee-script": "^1.12.1",
     "debug": "^3.0.0",
     "fbp-protocol-client": "^0.1.13",
-    "noflo": "1.0.0"
+    "noflo": "^1.0.0"
   },
   "devDependencies": {
     "chai": "^4.0.0",
@@ -33,7 +33,7 @@
     "microflo-emscripten": "^0.3.36",
     "mocha": "^3.2.0",
     "noflo-core": "^0.4.1",
-    "noflo-runtime-websocket": "0.9.0",
+    "noflo-runtime-websocket": ">= 0.9.0",
     "tv4": "^1.2.7",
     "websocket": "^1.0.24"
   },
