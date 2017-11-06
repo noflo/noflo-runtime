@@ -7,13 +7,12 @@ class RemoteSubGraph extends noflo.Component
 
   constructor: (metadata) ->
     metadata = {} unless metadata
+    super()
 
     @runtime = null
     @ready = false
     @graph = null
     @graphName = null
-
-    super()
 
   isReady: ->
     @ready
