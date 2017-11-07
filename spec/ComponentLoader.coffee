@@ -15,9 +15,13 @@ describe 'ComponentLoader', ->
     chai.expect(ComponentLoader).to.be.a 'function'
 
   describe 'runtimes specified in project file', ->
-    baseDir = if noflo.isBrowser() then '/spec/data' else require('path').resolve __dirname, './data/'
+    baseDir = null
+    loader = null
     names = null
-    loader = new noflo.ComponentLoader baseDir
+    before ->
+      return @skip() if noflo.isBrowser()
+      baseDir = require('path').resolve __dirname, './data/'
+      loader = new noflo.ComponentLoader baseDir
     compName = 'runtime/2ef763ff-1f28-49b8-b58f-5c6a5c54af2d'
     it 'should be listed', (done) ->
         @timeout 5000

@@ -30,14 +30,7 @@ loadBrowserPackage = (baseDir, callback) ->
     packageDef = require packagePath
     callback null, packageDef
   catch e
-    req = new XMLHttpRequest
-    req.onreadystatechange = ->
-      return unless req.readyState is 4
-      unless req.status is 200
-        return callback new Error "Failed to load #{packagePath}: HTTP #{req.status}"
-      callback null, JSON.parse req.responseText
-    req.open 'GET', packagePath, true
-    req.send()
+    callback e
 
 getRuntimesBrowser = (baseDir, callback) ->
   # Read runtime definitions from component.json
