@@ -29,7 +29,6 @@ module.exports = ->
             'should': 'commonjs should' # used by tests in octo
             'express': 'commonjs express' # used by tests in octo
             'highlight': 'commonjs highlight' # used by octo?
-            'microflo-emscripten': 'commonjs microflo-emscripten' # optional?
             'acorn': 'commonjs acorn' # optional?
           module:
             rules: [
