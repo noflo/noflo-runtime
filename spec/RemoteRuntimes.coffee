@@ -80,7 +80,7 @@ describe 'Remote runtimes', ->
       input.send {test: true}
 
 
-  describe 'MicroFlo simulator direct in NoFlo', ->
+  describe.skip 'MicroFlo simulator direct in NoFlo', ->
     c = null
     c = null
     def =
