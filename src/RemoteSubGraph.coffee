@@ -49,8 +49,12 @@ class RemoteSubGraph extends noflo.Component
       else if msg.command == 'packet'
         @onPacketReceived msg.payload
 
+    ready = false
     @runtime.on 'error', (err) ->
+      throw err unless ready
       console.error err
+    @runtime.once 'capabilities', ->
+      ready = true
 
     # Attempt to connect
     @runtime.connect()

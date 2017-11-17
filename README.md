@@ -3,3 +3,8 @@
 FBP Runtime handling components for NoFlo
 
 A thin wrapper around [flowbased/fbp-protocol-client](https://github.com/flowbased/fbp-protocol-client)
+
+## Changes
+
+* 0.6.1 (git master)
+  - Made RemoteSubgraph connection errors throw
